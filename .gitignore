@@ -1,0 +1,17 @@
+# secrets (Hugging Face token, Bodhan API keys)
+keys.txt
+bodhan.txt
+.env
+
+# environment
+venv/
+
+# per-job uploads and generated media
+storage/
+
+# python
+__pycache__/
+*.pyc
+
+# downloaded model weights
+models/

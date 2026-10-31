@@ -1,0 +1,2882 @@
+<!doctype html>
+<html lang="en" data-scheme="citrus">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dubbing Studio</title>
+<script>
+  try {
+    const theme = localStorage.getItem('theme');
+    if (theme) document.documentElement.dataset.theme = theme;
+  } catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+<style>
+  /* Material 3 Expressive: tonal colour roles, Google Sans, big shapes, springy motion */
+  :root {
+    --md-primary: #6442d6;
+    --md-on-primary: #ffffff;
+    --md-primary-container: #e9ddff;
+    --md-on-primary-container: #22005d;
+    --md-secondary: #625b71;
+    --md-secondary-container: #e8def8;
+    --md-on-secondary-container: #1e192b;
+    --md-tertiary: #9c4167;
+    --md-tertiary-container: #ffd8e6;
+    --md-on-tertiary-container: #3e0021;
+    --md-surface: #fbfbfb;
+    --md-surface-dim: #dcdcdc;
+    --md-surface-container-lowest: #ffffff;
+    --md-surface-container-low: #f5f5f5;
+    --md-surface-container: #efefef;
+    --md-surface-container-high: #e9e9e9;
+    --md-surface-container-highest: #e3e3e3;
+    --md-on-surface: #1a1a1a;
+    --md-on-surface-variant: #4a4a4a;
+    --md-outline: #767676;
+    --md-outline-variant: #cfcfcf;
+    --md-inverse-surface: #2f2f2f;
+    --md-inverse-on-surface: #f2f2f2;
+    --md-error: #ba1a1a;
+    --md-error-container: #ffdad6;
+    --md-on-error-container: #410002;
+    --md-success: #24722f;
+    --md-success-container: #b8f3b3;
+    --md-warning: #7c5800;
+    --md-warning-container: #ffdf9e;
+    --md-scrim-blob-1: color-mix(in srgb, var(--md-primary) 8%, transparent);
+    --md-scrim-blob-2: color-mix(in srgb, var(--md-tertiary) 6%, transparent);
+
+    /* shape scale */
+    --shape-xs: 8px; --shape-s: 12px; --shape-m: 16px; --shape-l: 24px; --shape-xl: 32px; --shape-xxl: 44px; --shape-full: 999px;
+    /* motion: expressive springs */
+    --spring-fast: cubic-bezier(0.42, 1.67, 0.21, 0.9);
+    --spring: cubic-bezier(0.38, 1.21, 0.22, 1);
+    --emph: cubic-bezier(0.2, 0, 0, 1);
+    --elev-1: 0 1px 2px rgba(29, 26, 34, 0.08), 0 1px 3px 1px rgba(29, 26, 34, 0.05);
+    --elev-2: 0 1px 2px rgba(29, 26, 34, 0.10), 0 2px 6px 2px rgba(29, 26, 34, 0.07);
+    --elev-3: 0 4px 8px 3px rgba(29, 26, 34, 0.08), 0 1px 3px rgba(29, 26, 34, 0.10);
+
+    /* names the page's script still uses inline */
+    --accent: var(--md-primary);
+    --accent-soft: var(--md-primary-container);
+    --danger: var(--md-error);
+    --ok: var(--md-success);
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --md-primary: #cfbcff;
+    --md-on-primary: #381e72;
+    --md-primary-container: #4f378b;
+    --md-on-primary-container: #e9ddff;
+    --md-secondary: #ccc2dc;
+    --md-secondary-container: #4a4458;
+    --md-on-secondary-container: #e8def8;
+    --md-tertiary: #ffb0cb;
+    --md-tertiary-container: #7b2950;
+    --md-on-tertiary-container: #ffd8e6;
+    --md-surface: #0c0c0c;
+    --md-surface-dim: #0c0c0c;
+    --md-surface-container-lowest: #000000;
+    --md-surface-container-low: #141414;
+    --md-surface-container: #181818;
+    --md-surface-container-high: #222222;
+    --md-surface-container-highest: #2c2c2c;
+    --md-on-surface: #ececec;
+    --md-on-surface-variant: #bdbdbd;
+    --md-outline: #8a8a8a;
+    --md-outline-variant: #3d3d3d;
+    --md-inverse-surface: #ececec;
+    --md-inverse-on-surface: #2a2a2a;
+    --md-error: #ffb4ab;
+    --md-error-container: #93000a;
+    --md-on-error-container: #ffdad6;
+    --md-success: #9ad897;
+    --md-success-container: #1c5221;
+    --md-warning: #f2c14c;
+    --md-warning-container: #5c4200;
+    --elev-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+    --elev-2: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+    --elev-3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
+    color-scheme: dark;
+  }
+
+  /* colour schemes (palette menu); violet is the default above */
+  :root[data-scheme="lagoon"] {
+    --md-primary: #006a6a;
+    --md-on-primary: #ffffff;
+    --md-primary-container: #9cf1f0;
+    --md-on-primary-container: #002020;
+    --md-secondary-container: #cce8e7;
+    --md-on-secondary-container: #051f1f;
+    --md-tertiary: #a83f2a;
+    --md-tertiary-container: #ffdad3;
+    --md-on-tertiary-container: #3d0600;
+  }
+  :root[data-scheme="lagoon"][data-theme="dark"] {
+    --md-primary: #80d5d4;
+    --md-on-primary: #003737;
+    --md-primary-container: #004f4f;
+    --md-on-primary-container: #9cf1f0;
+    --md-secondary-container: #324b4b;
+    --md-on-secondary-container: #cce8e7;
+    --md-tertiary: #ffb4a5;
+    --md-tertiary-container: #862a15;
+    --md-on-tertiary-container: #ffdad3;
+  }
+  :root[data-scheme="forest"] {
+    --md-primary: #3b6939;
+    --md-on-primary: #ffffff;
+    --md-primary-container: #bcf0b4;
+    --md-on-primary-container: #002204;
+    --md-secondary-container: #d7e8cd;
+    --md-on-secondary-container: #121f0e;
+    --md-tertiary: #39656b;
+    --md-tertiary-container: #bcebf1;
+    --md-on-tertiary-container: #001f23;
+  }
+  :root[data-scheme="forest"][data-theme="dark"] {
+    --md-primary: #a1d39a;
+    --md-on-primary: #0a390f;
+    --md-primary-container: #235024;
+    --md-on-primary-container: #bcf0b4;
+    --md-secondary-container: #3c4b37;
+    --md-on-secondary-container: #d7e8cd;
+    --md-tertiary: #a1ced5;
+    --md-tertiary-container: #1f4d53;
+    --md-on-tertiary-container: #bcebf1;
+  }
+  :root[data-scheme="sunset"] {
+    --md-primary: #a0410d;
+    --md-on-primary: #ffffff;
+    --md-primary-container: #ffdbcc;
+    --md-on-primary-container: #370e00;
+    --md-secondary-container: #ffdbcf;
+    --md-on-secondary-container: #2c160d;
+    --md-tertiary: #6b5f10;
+    --md-tertiary-container: #f5e388;
+    --md-on-tertiary-container: #211b00;
+  }
+  :root[data-scheme="sunset"][data-theme="dark"] {
+    --md-primary: #ffb595;
+    --md-on-primary: #571e00;
+    --md-primary-container: #7c2e00;
+    --md-on-primary-container: #ffdbcc;
+    --md-secondary-container: #5d4035;
+    --md-on-secondary-container: #ffdbcf;
+    --md-tertiary: #d8c76f;
+    --md-tertiary-container: #524600;
+    --md-on-tertiary-container: #f5e388;
+  }
+  :root[data-scheme="rose"] {
+    --md-primary: #984061;
+    --md-on-primary: #ffffff;
+    --md-primary-container: #ffd9e2;
+    --md-on-primary-container: #3e001d;
+    --md-secondary-container: #f6dde3;
+    --md-on-secondary-container: #2b151b;
+    --md-tertiary: #7c5635;
+    --md-tertiary-container: #ffdcc1;
+    --md-on-tertiary-container: #2e1500;
+  }
+  :root[data-scheme="rose"][data-theme="dark"] {
+    --md-primary: #ffb0c8;
+    --md-on-primary: #5e1133;
+    --md-primary-container: #7b2949;
+    --md-on-primary-container: #ffd9e2;
+    --md-secondary-container: #5a3f45;
+    --md-on-secondary-container: #ffd9e1;
+    --md-tertiary: #efbd94;
+    --md-tertiary-container: #613f20;
+    --md-on-tertiary-container: #ffdcc1;
+  }
+  :root[data-scheme="citrus"] {
+    --md-primary: #5b6300;
+    --md-on-primary: #ffffff;
+    --md-primary-container: #e0ed7a;
+    --md-on-primary-container: #1a1e00;
+    --md-secondary-container: #e3e5c0;
+    --md-on-secondary-container: #1b1d07;
+    --md-tertiary: #9a4521;
+    --md-tertiary-container: #ffdbcd;
+    --md-on-tertiary-container: #360f00;
+  }
+  :root[data-scheme="citrus"][data-theme="dark"] {
+    --md-primary: #c4d161;
+    --md-on-primary: #2e3300;
+    --md-primary-container: #444b00;
+    --md-on-primary-container: #e0ed7a;
+    --md-secondary-container: #464930;
+    --md-on-secondary-container: #e3e5c0;
+    --md-tertiary: #ffb597;
+    --md-tertiary-container: #7a2e0b;
+    --md-on-tertiary-container: #ffdbcd;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { height: 100%; }
+  body { min-height: 100%; }
+  body {
+    margin: 0; background: var(--md-surface); color: var(--md-on-surface);
+    font: 400 15px/1.5 "Google Sans", Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* expressive shapes drifting behind everything */
+  body::before, body::after {
+    content: ""; position: fixed; z-index: -1; pointer-events: none; aspect-ratio: 1;
+    -webkit-mask: var(--shape) center / contain no-repeat; mask: var(--shape) center / contain no-repeat;
+    animation: drift 60s linear infinite;
+  }
+  body::before { --shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M98.0 50.0L97.7 52.1L96.7 54.1L95.2 56.0L93.5 57.7L91.7 59.2L90.0 60.7L88.7 62.2L87.9 63.8L87.5 65.5L87.6 67.5L87.9 69.7L88.2 72.1L88.5 74.5L88.4 76.9L87.8 79.0L86.8 80.9L85.2 82.2L83.1 83.1L80.8 83.6L78.4 83.8L76.0 83.9L73.8 83.9L71.8 84.3L70.2 84.9L68.8 86.0L67.5 87.6L66.3 89.4L65.1 91.5L63.7 93.5L62.1 95.3L60.3 96.6L58.3 97.3L56.2 97.3L54.1 96.7L52.0 95.6L50.0 94.2L48.1 92.6L46.4 91.3L44.7 90.3L43.0 89.7L41.2 89.6L39.3 90.0L37.2 90.7L34.9 91.5L32.5 92.2L30.2 92.5L28.0 92.3L26.0 91.6L24.4 90.2L23.1 88.4L22.2 86.2L21.6 83.8L21.2 81.5L20.7 79.3L20.1 77.4L19.1 75.9L17.8 74.7L16.1 73.8L14.0 72.9L11.8 72.1L9.5 71.1L7.5 69.8L5.9 68.3L4.9 66.4L4.5 64.3L4.7 62.1L5.5 59.9L6.5 57.7L7.7 55.6L8.7 53.6L9.4 51.8L9.7 50.0L9.4 48.2L8.7 46.4L7.7 44.4L6.5 42.3L5.5 40.1L4.7 37.9L4.5 35.7L4.9 33.6L5.9 31.7L7.5 30.2L9.5 28.9L11.8 27.9L14.0 27.1L16.1 26.2L17.8 25.3L19.1 24.1L20.1 22.6L20.7 20.7L21.2 18.5L21.6 16.2L22.2 13.8L23.1 11.6L24.4 9.8L26.0 8.4L28.0 7.7L30.2 7.5L32.5 7.8L34.9 8.5L37.2 9.3L39.3 10.0L41.2 10.4L43.0 10.3L44.7 9.7L46.4 8.7L48.1 7.4L50.0 5.8L52.0 4.4L54.1 3.3L56.2 2.7L58.3 2.7L60.3 3.4L62.1 4.7L63.7 6.5L65.1 8.5L66.3 10.6L67.5 12.4L68.8 14.0L70.2 15.1L71.8 15.7L73.8 16.1L76.0 16.1L78.4 16.2L80.8 16.4L83.1 16.9L85.2 17.8L86.8 19.1L87.8 21.0L88.4 23.1L88.5 25.5L88.2 27.9L87.9 30.3L87.6 32.5L87.5 34.5L87.9 36.2L88.7 37.8L90.0 39.3L91.7 40.8L93.5 42.3L95.2 44.0L96.7 45.9L97.7 47.9Z'/%3E%3C/svg%3E"); width: 620px; top: -220px; right: -160px; background: var(--md-scrim-blob-1); }
+  body::after { --shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M98.0 50.0L97.5 52.1L96.0 54.0L93.8 55.8L91.0 57.2L88.1 58.4L85.2 59.4L82.8 60.4L81.1 61.3L80.2 62.5L80.0 64.0L80.5 65.9L81.6 68.2L82.9 70.9L84.1 73.9L85.0 76.9L85.4 79.7L85.0 82.1L83.9 83.9L82.1 85.0L79.7 85.4L76.9 85.0L73.9 84.1L70.9 82.9L68.2 81.6L65.9 80.5L64.0 80.0L62.5 80.2L61.3 81.1L60.4 82.8L59.4 85.2L58.4 88.1L57.2 91.0L55.8 93.8L54.0 96.0L52.1 97.5L50.0 98.0L47.9 97.5L46.0 96.0L44.2 93.8L42.8 91.0L41.6 88.1L40.6 85.2L39.6 82.8L38.7 81.1L37.5 80.2L36.0 80.0L34.1 80.5L31.8 81.6L29.1 82.9L26.1 84.1L23.1 85.0L20.3 85.4L17.9 85.0L16.1 83.9L15.0 82.1L14.6 79.7L15.0 76.9L15.9 73.9L17.1 70.9L18.4 68.2L19.5 65.9L20.0 64.0L19.8 62.5L18.9 61.3L17.2 60.4L14.8 59.4L11.9 58.4L9.0 57.2L6.2 55.8L4.0 54.0L2.5 52.1L2.0 50.0L2.5 47.9L4.0 46.0L6.2 44.2L9.0 42.8L11.9 41.6L14.8 40.6L17.2 39.6L18.9 38.7L19.8 37.5L20.0 36.0L19.5 34.1L18.4 31.8L17.1 29.1L15.9 26.1L15.0 23.1L14.6 20.3L15.0 17.9L16.1 16.1L17.9 15.0L20.3 14.6L23.1 15.0L26.1 15.9L29.1 17.1L31.8 18.4L34.1 19.5L36.0 20.0L37.5 19.8L38.7 18.9L39.6 17.2L40.6 14.8L41.6 11.9L42.8 9.0L44.2 6.2L46.0 4.0L47.9 2.5L50.0 2.0L52.1 2.5L54.0 4.0L55.8 6.2L57.2 9.0L58.4 11.9L59.4 14.8L60.4 17.2L61.3 18.9L62.5 19.8L64.0 20.0L65.9 19.5L68.2 18.4L70.9 17.1L73.9 15.9L76.9 15.0L79.7 14.6L82.1 15.0L83.9 16.1L85.0 17.9L85.4 20.3L85.0 23.1L84.1 26.1L82.9 29.1L81.6 31.8L80.5 34.1L80.0 36.0L80.2 37.5L81.1 38.7L82.8 39.6L85.2 40.6L88.1 41.6L91.0 42.8L93.8 44.2L96.0 46.0L97.5 47.9Z'/%3E%3C/svg%3E"); width: 520px; bottom: -200px; left: 120px; background: var(--md-scrim-blob-2); animation-direction: reverse; animation-duration: 80s; }
+  @keyframes drift { to { transform: rotate(360deg); } }
+  button, select, input, textarea, option, optgroup { font: inherit; color: inherit; }
+  ::selection { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+
+  .msi {
+    font-family: "Material Symbols Rounded"; font-weight: normal; font-style: normal; font-size: 20px; line-height: 1;
+    letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; direction: ltr;
+    font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24; -webkit-font-smoothing: antialiased;
+  }
+  .msi.fill { font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; }
+
+  /* --- top app bar --- */
+  .topbar {
+    position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px;
+    height: 72px; padding: 0 20px; background: color-mix(in srgb, var(--md-surface) 82%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px; white-space: nowrap;
+    font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em;
+  }
+  .logo {
+    width: 40px; height: 40px; display: grid; place-items: center; color: var(--md-on-primary);
+    background: linear-gradient(140deg, var(--md-primary), var(--md-tertiary));
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M98.0 50.0L97.6 52.1L96.4 54.1L94.7 55.9L93.0 57.6L91.6 59.2L90.8 60.9L90.7 62.8L91.0 64.9L91.7 67.3L92.2 69.7L92.2 72.0L91.6 74.0L90.2 75.6L88.1 76.7L85.8 77.5L83.5 78.1L81.4 78.8L79.9 79.9L78.8 81.4L78.1 83.5L77.5 85.8L76.7 88.1L75.6 90.2L74.0 91.6L72.0 92.2L69.7 92.2L67.3 91.7L64.9 91.0L62.8 90.7L60.9 90.8L59.2 91.6L57.6 93.0L55.9 94.7L54.1 96.4L52.1 97.6L50.0 98.0L47.9 97.6L45.9 96.4L44.1 94.7L42.4 93.0L40.8 91.6L39.1 90.8L37.2 90.7L35.1 91.0L32.7 91.7L30.3 92.2L28.0 92.2L26.0 91.6L24.4 90.2L23.3 88.1L22.5 85.8L21.9 83.5L21.2 81.4L20.1 79.9L18.6 78.8L16.5 78.1L14.2 77.5L11.9 76.7L9.8 75.6L8.4 74.0L7.8 72.0L7.8 69.7L8.3 67.3L9.0 64.9L9.3 62.8L9.2 60.9L8.4 59.2L7.0 57.6L5.3 55.9L3.6 54.1L2.4 52.1L2.0 50.0L2.4 47.9L3.6 45.9L5.3 44.1L7.0 42.4L8.4 40.8L9.2 39.1L9.3 37.2L9.0 35.1L8.3 32.7L7.8 30.3L7.8 28.0L8.4 26.0L9.8 24.4L11.9 23.3L14.2 22.5L16.5 21.9L18.6 21.2L20.1 20.1L21.2 18.6L21.9 16.5L22.5 14.2L23.3 11.9L24.4 9.8L26.0 8.4L28.0 7.8L30.3 7.8L32.7 8.3L35.1 9.0L37.2 9.3L39.1 9.2L40.8 8.4L42.4 7.0L44.1 5.3L45.9 3.6L47.9 2.4L50.0 2.0L52.1 2.4L54.1 3.6L55.9 5.3L57.6 7.0L59.2 8.4L60.9 9.2L62.8 9.3L64.9 9.0L67.3 8.3L69.7 7.8L72.0 7.8L74.0 8.4L75.6 9.8L76.7 11.9L77.5 14.2L78.1 16.5L78.8 18.6L79.9 20.1L81.4 21.2L83.5 21.9L85.8 22.5L88.1 23.3L90.2 24.4L91.6 26.0L92.2 28.0L92.2 30.3L91.7 32.7L91.0 35.1L90.7 37.2L90.8 39.1L91.6 40.8L93.0 42.4L94.7 44.1L96.4 45.9L97.6 47.9Z'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M98.0 50.0L97.6 52.1L96.4 54.1L94.7 55.9L93.0 57.6L91.6 59.2L90.8 60.9L90.7 62.8L91.0 64.9L91.7 67.3L92.2 69.7L92.2 72.0L91.6 74.0L90.2 75.6L88.1 76.7L85.8 77.5L83.5 78.1L81.4 78.8L79.9 79.9L78.8 81.4L78.1 83.5L77.5 85.8L76.7 88.1L75.6 90.2L74.0 91.6L72.0 92.2L69.7 92.2L67.3 91.7L64.9 91.0L62.8 90.7L60.9 90.8L59.2 91.6L57.6 93.0L55.9 94.7L54.1 96.4L52.1 97.6L50.0 98.0L47.9 97.6L45.9 96.4L44.1 94.7L42.4 93.0L40.8 91.6L39.1 90.8L37.2 90.7L35.1 91.0L32.7 91.7L30.3 92.2L28.0 92.2L26.0 91.6L24.4 90.2L23.3 88.1L22.5 85.8L21.9 83.5L21.2 81.4L20.1 79.9L18.6 78.8L16.5 78.1L14.2 77.5L11.9 76.7L9.8 75.6L8.4 74.0L7.8 72.0L7.8 69.7L8.3 67.3L9.0 64.9L9.3 62.8L9.2 60.9L8.4 59.2L7.0 57.6L5.3 55.9L3.6 54.1L2.4 52.1L2.0 50.0L2.4 47.9L3.6 45.9L5.3 44.1L7.0 42.4L8.4 40.8L9.2 39.1L9.3 37.2L9.0 35.1L8.3 32.7L7.8 30.3L7.8 28.0L8.4 26.0L9.8 24.4L11.9 23.3L14.2 22.5L16.5 21.9L18.6 21.2L20.1 20.1L21.2 18.6L21.9 16.5L22.5 14.2L23.3 11.9L24.4 9.8L26.0 8.4L28.0 7.8L30.3 7.8L32.7 8.3L35.1 9.0L37.2 9.3L39.1 9.2L40.8 8.4L42.4 7.0L44.1 5.3L45.9 3.6L47.9 2.4L50.0 2.0L52.1 2.4L54.1 3.6L55.9 5.3L57.6 7.0L59.2 8.4L60.9 9.2L62.8 9.3L64.9 9.0L67.3 8.3L69.7 7.8L72.0 7.8L74.0 8.4L75.6 9.8L76.7 11.9L77.5 14.2L78.1 16.5L78.8 18.6L79.9 20.1L81.4 21.2L83.5 21.9L85.8 22.5L88.1 23.3L90.2 24.4L91.6 26.0L92.2 28.0L92.2 30.3L91.7 32.7L91.0 35.1L90.7 37.2L90.8 39.1L91.6 40.8L93.0 42.4L94.7 44.1L96.4 45.9L97.6 47.9Z'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: transform 0.6s var(--spring);
+  }
+  .brand:hover .logo { transform: rotate(60deg) scale(1.06); }
+  .logo .msi { font-size: 22px; }
+
+  .steps {
+    display: flex; align-items: center; gap: 4px; margin: 0 auto; padding: 6px;
+    background: var(--md-surface-container); border-radius: var(--shape-full);
+  }
+  .step {
+    display: flex; align-items: center; gap: 8px; color: var(--md-on-surface-variant); font-size: 0.86rem; font-weight: 500;
+    white-space: nowrap; padding: 4px 12px 4px 4px; border-radius: var(--shape-full); transition: background 0.35s var(--emph), color 0.35s;
+  }
+  .step .dot {
+    width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 0.75rem; font-weight: 700;
+    background: var(--md-surface-container-highest); color: var(--md-on-surface-variant);
+    transition: border-radius 0.5s var(--spring), background 0.3s, transform 0.5s var(--spring);
+  }
+  .step.done .dot { background: var(--md-primary); color: var(--md-on-primary); }
+  .step.active { background: var(--md-secondary-container); color: var(--md-on-secondary-container); font-weight: 700; }
+  .step.active .dot { background: var(--md-surface-container-lowest); color: var(--md-primary); }
+  .step.waiting { background: var(--md-primary-container); color: var(--md-on-primary-container); font-weight: 700; }
+  .step.waiting .dot { background: var(--md-primary); color: var(--md-on-primary); border-radius: 9px; }
+  .step.error { background: var(--md-error-container); color: var(--md-on-error-container); font-weight: 700; }
+  .step.error .dot { background: var(--md-error); color: var(--md-surface); }
+  .step-line { width: 14px; height: 3px; background: var(--md-outline-variant); border-radius: 3px; }
+  .step-line.done { background: var(--md-primary); }
+
+  /* --- buttons: pill at rest, squarer while pressed --- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 20px;
+    border-radius: var(--shape-full); border: none; cursor: pointer; position: relative; overflow: hidden; isolation: isolate;
+    background: var(--md-secondary-container); color: var(--md-on-secondary-container);
+    font-weight: 600; font-size: 0.9rem; letter-spacing: 0.01em; white-space: nowrap;
+    transition: border-radius 0.45s var(--spring), transform 0.45s var(--spring), box-shadow 0.2s, opacity 0.2s;
+  }
+  .btn::after { content: ""; position: absolute; inset: 0; background: currentColor; opacity: 0; transition: opacity 0.2s; z-index: -1; }
+  .btn:hover:not(:disabled)::after { opacity: 0.08; }
+  .btn:focus-visible { outline: 3px solid var(--md-primary); outline-offset: 2px; }
+  .btn:active:not(:disabled) { border-radius: var(--shape-s); transform: scale(0.97); }
+  .btn:active:not(:disabled)::after { opacity: 0.12; }
+  .btn.primary { background: var(--md-primary); color: var(--md-on-primary); }
+  .btn.primary:hover:not(:disabled) { box-shadow: var(--elev-1); }
+  .btn.big { height: 56px; padding: 0 28px; font-size: 1rem; border-radius: var(--shape-l); }
+  .btn.big:active:not(:disabled) { border-radius: var(--shape-m); }
+  .btn.small { height: 32px; padding: 0 14px; font-size: 0.8rem; font-weight: 600; }
+  .btn.danger { background: var(--md-error-container); color: var(--md-on-error-container); }
+  .btn.on { background: var(--md-primary); color: var(--md-on-primary); }
+  .btn:disabled { opacity: 0.38; cursor: not-allowed; }
+  a.btn { text-decoration: none; }
+  a.btn[aria-disabled="true"] { opacity: 0.38; pointer-events: none; }
+  .btn .msi { font-size: 18px; }
+  #newBtn { height: 48px; padding: 0 22px 0 18px; border-radius: var(--shape-m); background: var(--md-tertiary-container); color: var(--md-on-tertiary-container); box-shadow: var(--elev-2); }
+  #newBtn:hover { box-shadow: var(--elev-3); }
+  #newBtn:active { border-radius: var(--shape-l); }
+
+  .icon-btn, .theme-btn {
+    width: 44px; height: 44px; border: none; border-radius: 50%; background: transparent; cursor: pointer;
+    display: grid; place-items: center; color: var(--md-on-surface-variant);
+    transition: background 0.2s, border-radius 0.45s var(--spring);
+  }
+  .icon-btn { display: none; }
+  .icon-btn:hover, .theme-btn:hover { background: var(--md-surface-container-high); }
+  .icon-btn:active, .theme-btn:active { border-radius: var(--shape-s); }
+  .theme-btn { background: var(--md-surface-container); }
+  .scheme-wrap { position: relative; }
+  .menu {
+    position: absolute; right: 0; top: 54px; z-index: 40; min-width: 230px; padding: 8px; display: grid; gap: 2px;
+    background: var(--md-surface-container); border-radius: var(--shape-l); box-shadow: var(--elev-3);
+    transform-origin: top right; animation: menu-in 0.4s var(--spring);
+  }
+  @keyframes menu-in { from { opacity: 0; transform: scale(0.85); } }
+  .menu-title { padding: 8px 12px 6px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--md-on-surface-variant); }
+  .menu button {
+    display: flex; align-items: center; gap: 12px; height: 46px; padding: 0 12px; border: none; background: none; cursor: pointer;
+    border-radius: var(--shape-m); color: var(--md-on-surface); font-weight: 600; text-align: left;
+    transition: background 0.2s, border-radius 0.45s var(--spring);
+  }
+  .menu button:hover { background: var(--md-surface-container-highest); }
+  .menu button[aria-checked="true"] { background: var(--md-secondary-container); color: var(--md-on-secondary-container); border-radius: var(--shape-full); }
+  .menu .sw {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    background: conic-gradient(from -90deg, var(--sa) 0 50%, var(--sb) 0 75%, var(--sc) 0); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    transition: border-radius 0.45s var(--spring), transform 0.45s var(--spring);
+  }
+  .menu button:hover .sw { border-radius: 9px; transform: rotate(45deg); }
+  .menu .chk { margin-left: auto; opacity: 0; transition: opacity 0.2s; }
+  .menu button[aria-checked="true"] .chk { opacity: 1; }
+  .link { color: var(--md-on-surface-variant); font-size: 0.82rem; text-decoration: none; white-space: nowrap; }
+
+  /* --- shell + navigation drawer --- */
+  .shell { display: grid; grid-template-columns: 300px minmax(0, 1fr); min-height: calc(100% - 72px); }
+  .sidebar {
+    margin: 0 0 16px 16px; padding: 0 12px 18px; background: var(--md-surface-container-low); border-radius: var(--shape-xl);
+    position: sticky; top: 72px; height: calc(100vh - 88px); overflow-y: auto; scrollbar-width: none;
+  }
+  .sidebar::-webkit-scrollbar { display: none; }
+  /* stays at the top of the drawer while the runs scroll under it */
+  .side-head {
+    position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 10px 12px; background: var(--md-surface-container-low);
+  }
+  .side-head h2 { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--md-on-surface-variant); }
+  .side-head .btn.small { width: 36px; height: 36px; padding: 0; background: transparent; }
+  .side-head .btn.small:hover::after { opacity: 0.1; }
+  .run-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  .run-item {
+    width: 100%; text-align: left; border: none; background: none; border-radius: var(--shape-l);
+    padding: 12px 14px; cursor: pointer; display: grid; gap: 4px; color: var(--md-on-surface);
+    transition: background 0.25s var(--emph), border-radius 0.45s var(--spring);
+  }
+  .run-item:hover { background: var(--md-surface-container-high); }
+  .run-item:active { border-radius: var(--shape-m); }
+  .run-item.active { background: var(--md-secondary-container); color: var(--md-on-secondary-container); border-radius: var(--shape-xl); }
+  .run-item .row1 { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+  .run-item .row1 .pill { flex-shrink: 0; }
+  .run-item .name {
+    flex: 1; min-width: 0; font-weight: 650; font-size: 0.92rem; line-height: 1.3; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+  }
+  .run-item .meta { overflow-wrap: anywhere; }
+  .run-item .meta { color: var(--md-on-surface-variant); font-size: 0.78rem; }
+  .side-empty { color: var(--md-on-surface-variant); font-size: 0.85rem; padding: 10px; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 11px; border-radius: var(--shape-s);
+    font-size: 0.74rem; font-weight: 700; white-space: nowrap; letter-spacing: 0.01em;
+    background: var(--md-surface-container-highest); color: var(--md-on-surface-variant);
+  }
+  .pill.ok { background: var(--md-success-container); color: var(--md-success); }
+  .pill.wait { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+  .pill.busy { background: var(--md-tertiary-container); color: var(--md-on-tertiary-container); }
+  .pill.bad { background: var(--md-error-container); color: var(--md-on-error-container); }
+
+  /* small: a circular indicator; large: the expressive loading indicator (a morphing shape) */
+  .spin {
+    width: 11px; height: 11px; border-radius: 50%; border: 2.5px solid currentColor; border-right-color: transparent;
+    animation: spin 0.9s linear infinite; display: inline-block; flex-shrink: 0;
+  }
+  .spin.lg {
+    width: 26px; height: 26px; border: none; background: var(--md-primary);
+    animation: morph 1.6s var(--emph) infinite, spin 2.4s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes morph {
+    0%, 100% { border-radius: 50%; scale: 1; }
+    25% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; scale: 0.86; }
+    50% { border-radius: 18%; scale: 1.04; }
+    75% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; scale: 0.9; }
+  }
+
+  main { padding: 8px 24px 32px; min-width: 0; }
+  .card { background: var(--md-surface-container-low); border-radius: var(--shape-xl); }
+
+  /* --- upload view --- */
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+
+  .upload-choices { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, 1fr); gap: 16px; padding-top: 12px; animation: rise 0.8s 0.08s var(--emph) both; }
+  .drop {
+    position: relative; overflow: hidden; display: grid; place-items: center; text-align: center; gap: 10px;
+    padding: 56px 28px; cursor: pointer; border-radius: var(--shape-xxl); min-height: 300px;
+    background: var(--md-primary-container); color: var(--md-on-primary-container);
+    transition: border-radius 0.6s var(--spring), transform 0.6s var(--spring), box-shadow 0.3s;
+  }
+  .drop::before {
+    content: ""; position: absolute; width: 420px; aspect-ratio: 1; right: -140px; bottom: -170px; opacity: 0.5;
+    background: color-mix(in srgb, var(--md-primary) 22%, transparent);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M98.0 50.0L97.4 52.1L95.8 54.0L94.0 55.8L92.7 57.5L92.3 59.4L92.9 61.5L93.9 63.8L94.6 66.2L94.3 68.4L93.0 70.0L90.8 71.2L88.5 72.2L86.6 73.3L85.5 74.9L85.2 77.0L85.3 79.6L85.0 82.0L83.9 83.9L82.0 85.0L79.6 85.3L77.0 85.2L74.9 85.5L73.3 86.6L72.2 88.5L71.2 90.8L70.0 93.0L68.4 94.3L66.2 94.6L63.8 93.9L61.5 92.9L59.4 92.3L57.5 92.7L55.8 94.0L54.0 95.8L52.1 97.4L50.0 98.0L47.9 97.4L46.0 95.8L44.2 94.0L42.5 92.7L40.6 92.3L38.5 92.9L36.2 93.9L33.8 94.6L31.6 94.3L30.0 93.0L28.8 90.8L27.8 88.5L26.7 86.6L25.1 85.5L23.0 85.2L20.4 85.3L18.0 85.0L16.1 83.9L15.0 82.0L14.7 79.6L14.8 77.0L14.5 74.9L13.4 73.3L11.5 72.2L9.2 71.2L7.0 70.0L5.7 68.4L5.4 66.2L6.1 63.8L7.1 61.5L7.7 59.4L7.3 57.5L6.0 55.8L4.2 54.0L2.6 52.1L2.0 50.0L2.6 47.9L4.2 46.0L6.0 44.2L7.3 42.5L7.7 40.6L7.1 38.5L6.1 36.2L5.4 33.8L5.7 31.6L7.0 30.0L9.2 28.8L11.5 27.8L13.4 26.7L14.5 25.1L14.8 23.0L14.7 20.4L15.0 18.0L16.1 16.1L18.0 15.0L20.4 14.7L23.0 14.8L25.1 14.5L26.7 13.4L27.8 11.5L28.8 9.2L30.0 7.0L31.6 5.7L33.8 5.4L36.2 6.1L38.5 7.1L40.6 7.7L42.5 7.3L44.2 6.0L46.0 4.2L47.9 2.6L50.0 2.0L52.1 2.6L54.0 4.2L55.8 6.0L57.5 7.3L59.4 7.7L61.5 7.1L63.8 6.1L66.2 5.4L68.4 5.7L70.0 7.0L71.2 9.2L72.2 11.5L73.3 13.4L74.9 14.5L77.0 14.8L79.6 14.7L82.0 15.0L83.9 16.1L85.0 18.0L85.3 20.4L85.2 23.0L85.5 25.1L86.6 26.7L88.5 27.8L90.8 28.8L93.0 30.0L94.3 31.6L94.6 33.8L93.9 36.2L92.9 38.5L92.3 40.6L92.7 42.5L94.0 44.2L95.8 46.0L97.4 47.9Z'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M98.0 50.0L97.4 52.1L95.8 54.0L94.0 55.8L92.7 57.5L92.3 59.4L92.9 61.5L93.9 63.8L94.6 66.2L94.3 68.4L93.0 70.0L90.8 71.2L88.5 72.2L86.6 73.3L85.5 74.9L85.2 77.0L85.3 79.6L85.0 82.0L83.9 83.9L82.0 85.0L79.6 85.3L77.0 85.2L74.9 85.5L73.3 86.6L72.2 88.5L71.2 90.8L70.0 93.0L68.4 94.3L66.2 94.6L63.8 93.9L61.5 92.9L59.4 92.3L57.5 92.7L55.8 94.0L54.0 95.8L52.1 97.4L50.0 98.0L47.9 97.4L46.0 95.8L44.2 94.0L42.5 92.7L40.6 92.3L38.5 92.9L36.2 93.9L33.8 94.6L31.6 94.3L30.0 93.0L28.8 90.8L27.8 88.5L26.7 86.6L25.1 85.5L23.0 85.2L20.4 85.3L18.0 85.0L16.1 83.9L15.0 82.0L14.7 79.6L14.8 77.0L14.5 74.9L13.4 73.3L11.5 72.2L9.2 71.2L7.0 70.0L5.7 68.4L5.4 66.2L6.1 63.8L7.1 61.5L7.7 59.4L7.3 57.5L6.0 55.8L4.2 54.0L2.6 52.1L2.0 50.0L2.6 47.9L4.2 46.0L6.0 44.2L7.3 42.5L7.7 40.6L7.1 38.5L6.1 36.2L5.4 33.8L5.7 31.6L7.0 30.0L9.2 28.8L11.5 27.8L13.4 26.7L14.5 25.1L14.8 23.0L14.7 20.4L15.0 18.0L16.1 16.1L18.0 15.0L20.4 14.7L23.0 14.8L25.1 14.5L26.7 13.4L27.8 11.5L28.8 9.2L30.0 7.0L31.6 5.7L33.8 5.4L36.2 6.1L38.5 7.1L40.6 7.7L42.5 7.3L44.2 6.0L46.0 4.2L47.9 2.6L50.0 2.0L52.1 2.6L54.0 4.2L55.8 6.0L57.5 7.3L59.4 7.7L61.5 7.1L63.8 6.1L66.2 5.4L68.4 5.7L70.0 7.0L71.2 9.2L72.2 11.5L73.3 13.4L74.9 14.5L77.0 14.8L79.6 14.7L82.0 15.0L83.9 16.1L85.0 18.0L85.3 20.4L85.2 23.0L85.5 25.1L86.6 26.7L88.5 27.8L90.8 28.8L93.0 30.0L94.3 31.6L94.6 33.8L93.9 36.2L92.9 38.5L92.3 40.6L92.7 42.5L94.0 44.2L95.8 46.0L97.4 47.9Z'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: transform 1.2s var(--spring);
+  }
+  .drop:hover, .drop.over { border-radius: var(--shape-xl); box-shadow: var(--elev-2); }
+  .drop:hover::before, .drop.over::before { transform: rotate(40deg) scale(1.08); }
+  .drop.over { transform: scale(1.01); }
+  .drop > * { position: relative; }
+  .drop .big-icon {
+    width: 96px; height: 96px; display: grid; place-items: center; background: var(--md-primary); color: var(--md-on-primary);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M98.0 50.0L97.7 52.1L96.7 54.1L95.2 56.0L93.5 57.7L91.7 59.2L90.0 60.7L88.7 62.2L87.9 63.8L87.5 65.5L87.6 67.5L87.9 69.7L88.2 72.1L88.5 74.5L88.4 76.9L87.8 79.0L86.8 80.9L85.2 82.2L83.1 83.1L80.8 83.6L78.4 83.8L76.0 83.9L73.8 83.9L71.8 84.3L70.2 84.9L68.8 86.0L67.5 87.6L66.3 89.4L65.1 91.5L63.7 93.5L62.1 95.3L60.3 96.6L58.3 97.3L56.2 97.3L54.1 96.7L52.0 95.6L50.0 94.2L48.1 92.6L46.4 91.3L44.7 90.3L43.0 89.7L41.2 89.6L39.3 90.0L37.2 90.7L34.9 91.5L32.5 92.2L30.2 92.5L28.0 92.3L26.0 91.6L24.4 90.2L23.1 88.4L22.2 86.2L21.6 83.8L21.2 81.5L20.7 79.3L20.1 77.4L19.1 75.9L17.8 74.7L16.1 73.8L14.0 72.9L11.8 72.1L9.5 71.1L7.5 69.8L5.9 68.3L4.9 66.4L4.5 64.3L4.7 62.1L5.5 59.9L6.5 57.7L7.7 55.6L8.7 53.6L9.4 51.8L9.7 50.0L9.4 48.2L8.7 46.4L7.7 44.4L6.5 42.3L5.5 40.1L4.7 37.9L4.5 35.7L4.9 33.6L5.9 31.7L7.5 30.2L9.5 28.9L11.8 27.9L14.0 27.1L16.1 26.2L17.8 25.3L19.1 24.1L20.1 22.6L20.7 20.7L21.2 18.5L21.6 16.2L22.2 13.8L23.1 11.6L24.4 9.8L26.0 8.4L28.0 7.7L30.2 7.5L32.5 7.8L34.9 8.5L37.2 9.3L39.3 10.0L41.2 10.4L43.0 10.3L44.7 9.7L46.4 8.7L48.1 7.4L50.0 5.8L52.0 4.4L54.1 3.3L56.2 2.7L58.3 2.7L60.3 3.4L62.1 4.7L63.7 6.5L65.1 8.5L66.3 10.6L67.5 12.4L68.8 14.0L70.2 15.1L71.8 15.7L73.8 16.1L76.0 16.1L78.4 16.2L80.8 16.4L83.1 16.9L85.2 17.8L86.8 19.1L87.8 21.0L88.4 23.1L88.5 25.5L88.2 27.9L87.9 30.3L87.6 32.5L87.5 34.5L87.9 36.2L88.7 37.8L90.0 39.3L91.7 40.8L93.5 42.3L95.2 44.0L96.7 45.9L97.7 47.9Z'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M98.0 50.0L97.7 52.1L96.7 54.1L95.2 56.0L93.5 57.7L91.7 59.2L90.0 60.7L88.7 62.2L87.9 63.8L87.5 65.5L87.6 67.5L87.9 69.7L88.2 72.1L88.5 74.5L88.4 76.9L87.8 79.0L86.8 80.9L85.2 82.2L83.1 83.1L80.8 83.6L78.4 83.8L76.0 83.9L73.8 83.9L71.8 84.3L70.2 84.9L68.8 86.0L67.5 87.6L66.3 89.4L65.1 91.5L63.7 93.5L62.1 95.3L60.3 96.6L58.3 97.3L56.2 97.3L54.1 96.7L52.0 95.6L50.0 94.2L48.1 92.6L46.4 91.3L44.7 90.3L43.0 89.7L41.2 89.6L39.3 90.0L37.2 90.7L34.9 91.5L32.5 92.2L30.2 92.5L28.0 92.3L26.0 91.6L24.4 90.2L23.1 88.4L22.2 86.2L21.6 83.8L21.2 81.5L20.7 79.3L20.1 77.4L19.1 75.9L17.8 74.7L16.1 73.8L14.0 72.9L11.8 72.1L9.5 71.1L7.5 69.8L5.9 68.3L4.9 66.4L4.5 64.3L4.7 62.1L5.5 59.9L6.5 57.7L7.7 55.6L8.7 53.6L9.4 51.8L9.7 50.0L9.4 48.2L8.7 46.4L7.7 44.4L6.5 42.3L5.5 40.1L4.7 37.9L4.5 35.7L4.9 33.6L5.9 31.7L7.5 30.2L9.5 28.9L11.8 27.9L14.0 27.1L16.1 26.2L17.8 25.3L19.1 24.1L20.1 22.6L20.7 20.7L21.2 18.5L21.6 16.2L22.2 13.8L23.1 11.6L24.4 9.8L26.0 8.4L28.0 7.7L30.2 7.5L32.5 7.8L34.9 8.5L37.2 9.3L39.3 10.0L41.2 10.4L43.0 10.3L44.7 9.7L46.4 8.7L48.1 7.4L50.0 5.8L52.0 4.4L54.1 3.3L56.2 2.7L58.3 2.7L60.3 3.4L62.1 4.7L63.7 6.5L65.1 8.5L66.3 10.6L67.5 12.4L68.8 14.0L70.2 15.1L71.8 15.7L73.8 16.1L76.0 16.1L78.4 16.2L80.8 16.4L83.1 16.9L85.2 17.8L86.8 19.1L87.8 21.0L88.4 23.1L88.5 25.5L88.2 27.9L87.9 30.3L87.6 32.5L87.5 34.5L87.9 36.2L88.7 37.8L90.0 39.3L91.7 40.8L93.5 42.3L95.2 44.0L96.7 45.9L97.7 47.9Z'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: transform 0.8s var(--spring);
+  }
+  .drop .big-icon .msi { font-size: 40px; }
+  .drop:hover .big-icon, .drop.over .big-icon { transform: rotate(40deg) scale(1.08); }
+  .drop:hover .big-icon .msi, .drop.over .big-icon .msi { transform: rotate(-40deg); }
+  .drop .big-icon .msi { transition: transform 0.8s var(--spring); }
+  .drop h3 { margin: 10px 0 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.015em; }
+  .drop p { margin: 0; max-width: 46ch; opacity: 0.8; }
+  .drop input { display: none; }
+
+  .yt { padding: 28px; display: grid; gap: 14px; align-content: start; background: var(--md-surface-container); border-radius: var(--shape-xxl); }
+  .yt h3 { margin: 0; display: flex; align-items: center; gap: 12px; font-size: 1.25rem; font-weight: 700; }
+  .yt h3 .badge {
+    width: 44px; height: 44px; display: grid; place-items: center; background: var(--md-tertiary); color: var(--md-surface);
+    border-radius: var(--shape-m); transform: rotate(-6deg);
+  }
+  .yt-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .yt-row input[type=url], .yt-row select, .field select, .field input[type=number], .field input[type=text], .action select {
+    height: 52px; padding: 0 16px; border: none; border-radius: var(--shape-m) var(--shape-m) var(--shape-xs) var(--shape-xs);
+    background: var(--md-surface-container-highest); color: var(--md-on-surface);
+    box-shadow: inset 0 -1px 0 var(--md-on-surface-variant); outline: none;
+    transition: box-shadow 0.2s, border-radius 0.4s var(--spring);
+  }
+  .yt-row input[type=url]:focus, .yt-row select:focus, .field select:focus, .field input[type=number]:focus, .field input[type=text]:focus, .action select:focus {
+    box-shadow: inset 0 -3px 0 var(--md-primary); border-radius: var(--shape-s) var(--shape-s) var(--shape-xs) var(--shape-xs);
+  }
+  .yt-row input[type=url] { flex: 1 1 100%; min-width: 0; }
+  .yt-row select { flex: 1; }
+  .yt-row .btn { height: 52px; flex: 1; background: var(--md-tertiary); color: var(--md-surface); }
+  .yt-row .btn.small { height: 52px; flex: 0 0 auto; background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
+  .yt-info { display: grid; gap: 12px; }
+  .yt-head { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 14px; align-items: center; }
+  .yt-thumb { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--shape-m); background: var(--md-surface-container-highest); }
+  .yt-title { font-weight: 700; overflow-wrap: anywhere; }
+  .yt-meta { margin-top: 4px; color: var(--md-on-surface-variant); font-size: 0.86rem; }
+  .yt-info input[type=text] {
+    width: 100%; height: 52px; padding: 0 16px; border: none; border-radius: var(--shape-m) var(--shape-m) var(--shape-xs) var(--shape-xs);
+    background: var(--md-surface-container-highest); color: var(--md-on-surface);
+    box-shadow: inset 0 -1px 0 var(--md-on-surface-variant); outline: none;
+  }
+  .yt-info input[type=text]:focus { box-shadow: inset 0 -3px 0 var(--md-primary); }
+  /* two range inputs stacked on the same track as the upload's portion bar; only their thumbs take the pointer.
+     The thumbs are M3 bar handles, with a gap cut into the track around them */
+  .yt-slider { position: relative; height: 28px; }
+  .yt-slider .range-track { position: absolute; left: 2px; right: 2px; top: 6px; margin: 0; cursor: default; }
+  .yt-slider .range-sel { transition: none; }
+  .yt-slider input[type=range] {
+    position: absolute; inset: 0; width: 100%; height: 28px; margin: 0; background: none;
+    -webkit-appearance: none; appearance: none; pointer-events: none; outline: none;
+  }
+  .yt-slider input[type=range]::-webkit-slider-runnable-track { height: 28px; background: none; }
+  .yt-slider input[type=range]::-moz-range-track { background: none; }
+  .yt-slider input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; pointer-events: auto; width: 4px; height: 28px; border-radius: 2px; cursor: grab;
+    background: var(--md-primary); box-shadow: 0 0 0 4px var(--md-surface-container);
+    transition: width 0.2s var(--emph);
+  }
+  .yt-slider input[type=range]::-moz-range-thumb {
+    pointer-events: auto; width: 4px; height: 28px; border: none; border-radius: 2px; cursor: grab;
+    background: var(--md-primary); box-shadow: 0 0 0 4px var(--md-surface-container);
+  }
+  .yt-slider input[type=range]:active::-webkit-slider-thumb { width: 2px; cursor: grabbing; }
+  .yt-slider input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px var(--md-surface-container), 0 0 0 6px var(--md-primary); }
+  #ytLength { font-weight: 700; color: var(--md-on-surface); }
+  .yt-note { margin: 0; color: var(--md-on-surface-variant); font-size: 0.84rem; }
+  .yt-note.bad { color: var(--md-error); font-weight: 600; }
+
+  .upload-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr); gap: 16px; align-items: start; animation: rise 0.6s var(--emph) both; }
+  .video-card { padding: 12px; }
+  .video-card video { width: 100%; display: block; border-radius: var(--shape-l); background: #000; max-height: 62vh; }
+  .settings { padding: 24px; display: grid; gap: 20px; background: var(--md-surface-container); }
+  .settings h3 { margin: 0; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.015em; }
+  .file-name { color: var(--md-on-surface-variant); font-size: 0.86rem; word-break: break-all; margin-top: 4px; }
+  .field { display: grid; gap: 8px; }
+  .field > span { font-size: 0.78rem; font-weight: 700; color: var(--md-primary); letter-spacing: 0.04em; text-transform: uppercase; }
+  .field select, .field input[type=number], .field input[type=text] { width: 100%; }
+  .range-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .range-inputs label { display: grid; gap: 6px; font-size: 0.8rem; color: var(--md-on-surface-variant); font-weight: 500; }
+  .range-inputs .btn { margin-top: 2px; }
+  .range-track { position: relative; height: 16px; background: var(--md-secondary-container); border-radius: var(--shape-full); margin-top: 6px; cursor: pointer; }
+  .range-sel { position: absolute; top: 0; bottom: 0; background: var(--md-primary); border-radius: var(--shape-full); opacity: 1; transition: left 0.3s var(--emph), width 0.3s var(--emph); }
+  .range-head { position: absolute; top: -6px; bottom: -6px; width: 4px; margin-left: -2px; background: var(--md-on-surface); border-radius: 4px; }
+  .range-info { font-size: 0.86rem; color: var(--md-on-surface-variant); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .range-info.bad { color: var(--md-error); font-weight: 600; }
+  .upload-progress { height: 8px; border-radius: var(--shape-full); background: var(--md-secondary-container); overflow: hidden; }
+  .upload-progress div { height: 100%; width: 0; background: var(--md-primary); border-radius: var(--shape-full); transition: width 0.3s var(--emph); }
+
+  /* --- run view --- */
+  .run-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 12px 4px 20px; animation: rise 0.5s var(--emph) both; }
+  .run-head h1 { margin: 0; font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+  .run-head .sub { color: var(--md-on-surface-variant); font-size: 0.9rem; margin-top: 6px; }
+  .run-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .run-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(360px, 1fr); gap: 16px; align-items: start; }
+  /* the video and speaker timeline stay on screen while the segments scroll */
+  .left-col {
+    display: grid; gap: 16px; min-width: 0; position: sticky; top: 88px; max-height: calc(100vh - 104px);
+    overflow-y: auto; scrollbar-width: none;
+  }
+  .left-col::-webkit-scrollbar { display: none; }
+  .placeholder {
+    aspect-ratio: 16 / 9; border-radius: var(--shape-l); background: var(--md-surface-container-high); display: grid; place-items: center;
+    color: var(--md-on-surface-variant); gap: 12px; text-align: center;
+  }
+  .placeholder .spin.lg { margin: 0 auto 12px; display: block; }
+
+  .timeline { padding: 20px; }
+  .tl-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .tl-head h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+  .tl-head span { color: var(--md-on-surface-variant); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+  .lanes { position: relative; display: grid; gap: 8px; }
+  .lane { display: grid; grid-template-columns: 188px minmax(0, 1fr); align-items: center; gap: 10px; }
+  .lane-label { font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+  .lane-label select { font: inherit; font-size: 0.78rem; font-weight: 500; padding: 2px 4px; border-radius: 8px; }
+  .avatar { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--c); object-fit: cover; }
+  span.avatar { display: inline-grid; place-items: center; color: #fff; font-size: 0.72rem; font-weight: 700; font-style: normal; }
+  .lane-track { position: relative; height: 28px; background: var(--md-surface-container-highest); border-radius: var(--shape-full); cursor: pointer; overflow: hidden; }
+  .lane-seg { position: absolute; top: 4px; bottom: 4px; border-radius: var(--shape-full); background: var(--c); opacity: 0.8; min-width: 3px; transition: opacity 0.2s, transform 0.3s var(--spring); }
+  .lane-seg:hover, .lane-seg.active { opacity: 1; transform: scaleY(1.25); }
+  .playhead { position: absolute; top: -5px; bottom: -5px; width: 3px; background: var(--md-on-surface); border-radius: 3px; pointer-events: none; }
+  .playhead-wrap { position: absolute; top: 0; bottom: 0; left: 198px; right: 0; pointer-events: none; }
+
+  .panel { display: flex; flex-direction: column; }
+  .panel-head { padding: 20px 20px 14px; display: grid; gap: 14px; }
+  .panel-title { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .panel-title h2 { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
+  .panel-title span { color: var(--md-on-surface-variant); font-size: 0.86rem; font-weight: 500; }
+  .action { display: grid; gap: 10px; padding: 16px; border-radius: var(--shape-l); background: var(--md-surface-container-high); }
+  .action .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .action .hint { color: var(--md-on-surface-variant); font-size: 0.84rem; margin: 0; }
+  .action .err { color: var(--md-on-error-container); background: var(--md-error-container); padding: 10px 12px; border-radius: var(--shape-m); font-size: 0.85rem; margin: 0; overflow-wrap: anywhere; }
+  .action select { height: 40px; padding: 0 12px; }
+  .action .pick { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: var(--md-on-surface-variant); }
+
+  /* wavy progress indicator */
+  .bar { position: relative; height: 12px; border-radius: var(--shape-full); overflow: hidden; }
+  .bar::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 4px; margin-top: -2px; border-radius: 4px; background: var(--md-secondary-container); }
+  .bar div {
+    position: relative; height: 100%; background: var(--md-primary); transition: width 0.5s var(--emph);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12'%3E%3Cpath d='M0 6 Q6 1 12 6 T24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") 0 50% / 24px 12px repeat-x; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12'%3E%3Cpath d='M0 6 Q6 1 12 6 T24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") 0 50% / 24px 12px repeat-x;
+    animation: wave 1s linear infinite;
+  }
+  @keyframes wave { to { -webkit-mask-position: 24px 50%; mask-position: 24px 50%; } }
+  .pill.stale { background: var(--md-warning-container); color: var(--md-warning); }
+  .redo { border-radius: var(--shape-m); background: var(--md-surface-container); padding: 0 14px; }
+  .redo summary { cursor: pointer; padding: 12px 0; font-weight: 600; font-size: 0.88rem; color: var(--md-on-surface-variant); list-style: none; display: flex; align-items: center; gap: 8px; }
+  .redo summary::-webkit-details-marker { display: none; }
+  .redo summary::before { content: "▸"; transition: transform 0.3s var(--spring); }
+  .redo[open] summary::before { transform: rotate(90deg); }
+  .redo[open] { padding-bottom: 12px; display: grid; gap: 10px; }
+  .redo .hint { margin: 0; }
+  .prompt-dialog {
+    width: min(760px, calc(100% - 32px)); padding: 24px; border: none; border-radius: var(--shape-xl);
+    background: var(--md-surface-container-high); color: var(--md-on-surface); box-shadow: var(--elev-3);
+  }
+  .prompt-dialog::backdrop { background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px); }
+  .prompt-dialog[open] { animation: pop-in 0.4s var(--spring); }
+  @keyframes pop-in { from { opacity: 0; transform: scale(0.92); } }
+  .prompt-dialog h2 { margin: 0 0 6px; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; }
+  .prompt-dialog .hint { color: var(--md-on-surface-variant); font-size: 0.84rem; margin: 6px 0 12px; }
+  .prompt-dialog code { background: var(--md-surface-container-highest); padding: 1px 6px; border-radius: 6px; font-size: 0.82rem; }
+  .prompt-dialog textarea {
+    width: 100%; resize: vertical; min-height: 240px; padding: 14px 16px; border: none; outline: none; border-radius: var(--shape-m);
+    background: var(--md-surface-container-lowest); color: var(--md-on-surface); box-shadow: inset 0 -2px 0 var(--md-outline-variant);
+    font: 0.84rem/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  .prompt-dialog textarea:focus { box-shadow: inset 0 -3px 0 var(--md-primary); }
+  .dialog-actions { display: flex; gap: 10px; align-items: center; }
+  .dialog-actions .spacer { flex: 1; }
+  .count { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 0.88rem; }
+
+  .seg-list { list-style: none; margin: 0; padding: 4px 12px 16px; display: grid; gap: 4px; align-content: start; }
+  .seg {
+    position: relative; padding: 12px 14px 12px 22px; border-radius: var(--shape-l); cursor: pointer; display: grid; gap: 5px;
+    background: var(--md-surface-container-lowest);
+    transition: background 0.25s var(--emph), border-radius 0.45s var(--spring), transform 0.45s var(--spring);
+  }
+  .seg::before { content: ""; position: absolute; left: 8px; top: 14px; bottom: 14px; width: 5px; border-radius: 5px; background: var(--c); transition: top 0.4s var(--spring), bottom 0.4s var(--spring); }
+  .seg:first-child { border-top-left-radius: var(--shape-xl); border-top-right-radius: var(--shape-xl); }
+  .seg:last-child { border-bottom-left-radius: var(--shape-xl); border-bottom-right-radius: var(--shape-xl); }
+  .seg:hover { background: var(--md-surface-container-highest); }
+  .seg:active { transform: scale(0.99); }
+  .seg.active { background: var(--md-primary-container); color: var(--md-on-primary-container); border-radius: var(--shape-xl); }
+  .seg.active::before { top: 10px; bottom: 10px; }
+  .seg-top { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; color: var(--md-on-surface-variant); }
+  .seg.active .seg-top { color: inherit; opacity: 0.85; }
+  .seg-top .spk { font-weight: 700; color: var(--md-on-surface); display: inline-flex; align-items: center; gap: 7px; }
+  .seg-top .avatar { width: 22px; height: 22px; }
+  .spk-pick { font: inherit; font-weight: 700; color: inherit; background: transparent; border: none; border-radius: 8px; padding: 2px 2px; cursor: pointer; }
+  .spk-pick:hover:not(:disabled) { background: var(--md-surface-container-highest); }
+  .spk-pick:disabled { cursor: default; appearance: none; }
+  .seg.active .seg-top .spk { color: inherit; }
+  .seg-top .time { font-variant-numeric: tabular-nums; }
+  .seg-top .dur { margin-left: auto; font-variant-numeric: tabular-nums; opacity: 0.7; }
+  .seg-text { font-size: 0.97rem; line-height: 1.55; overflow-wrap: anywhere; }
+  .seg-text.muted { color: var(--md-outline); font-size: 0.86rem; font-style: italic; }
+  .seg-text.bad { color: var(--md-error); font-size: 0.86rem; }
+  .seg.fresh .seg-text { animation: arrive 1.4s var(--emph); }
+  .seg-tr {
+    font-size: 0.95rem; line-height: 1.55; overflow-wrap: anywhere; color: var(--md-primary); font-weight: 500;
+    padding: 6px 12px; border-radius: var(--shape-m); background: color-mix(in srgb, var(--md-primary-container) 55%, transparent);
+  }
+  .seg.active .seg-tr { background: var(--md-surface-container-lowest); }
+  .seg-tr.muted { color: var(--md-outline); font-size: 0.86rem; font-style: italic; font-weight: 400; }
+  .seg-tr.bad { color: var(--md-error); font-size: 0.86rem; }
+  .seg.fresh-tr .seg-tr { animation: arrive 1.4s var(--emph); }
+  .seg-tr-overflow { opacity: 0.5; user-select: none; }
+  .seg-tr .seg-chars { margin-left: 8px; font-size: 0.75rem; font-weight: 400; color: var(--md-on-surface-variant); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .seg-review { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 0.78rem; color: var(--md-on-surface-variant); padding-left: 4px; }
+  .seg-review .tag { height: 22px; display: inline-flex; align-items: center; padding: 0 8px; border-radius: var(--shape-xs); background: var(--md-surface-container-highest); font-weight: 700; }
+  .seg-review .tag.edit { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+  .seg-review .tag.warn { background: var(--md-warning-container); color: var(--md-warning); }
+  .seg-review .reason { flex-basis: 100%; }
+  .seg-review .alt { flex-basis: 100%; color: var(--md-outline); text-decoration: line-through; overflow-wrap: anywhere; }
+  .seg-review .alt.edit { text-decoration: none; font-style: italic; }
+  .audio-switch { display: inline-flex; align-items: center; gap: 4px; margin-top: 12px; padding: 4px 4px 4px 14px; font-size: 0.85rem; font-weight: 600; color: var(--md-on-surface-variant); background: var(--md-surface-container-high); border-radius: var(--shape-full); }
+  .audio-switch .btn { background: transparent; color: var(--md-on-surface-variant); }
+  .audio-switch .btn.on { background: var(--md-primary); color: var(--md-on-primary); }
+  .voices { display: grid; gap: 8px; }
+  .voice-row { display: flex; align-items: center; gap: 10px; font-size: 0.86rem; font-weight: 600; }
+  .voice-row select { margin-left: auto; }
+  .links { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.84rem; }
+  .links a { color: var(--md-primary); font-weight: 600; text-underline-offset: 3px; }
+  .seg-dub { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--md-on-surface-variant); flex-wrap: wrap; }
+  .seg-dub .bad { color: var(--md-error); }
+  .speed { font-weight: 700; font-variant-numeric: tabular-nums; height: 22px; display: inline-flex; align-items: center; padding: 0 9px; border-radius: var(--shape-full); }
+  .speed.s1 { background: var(--md-success-container); color: var(--md-success); }
+  .speed.s2 { background: var(--md-warning-container); color: var(--md-warning); }
+  .speed.s3 { background: var(--md-error-container); color: var(--md-on-error-container); }
+  .seg.fresh-dub .seg-dub { animation: arrive 1.4s var(--emph); }
+  .edit-btn {
+    border: none; background: transparent; color: var(--md-on-surface-variant); width: 26px; height: 26px; padding: 0; margin-left: 4px;
+    border-radius: 50%; cursor: pointer; vertical-align: middle; opacity: 0.55; transition: opacity 0.2s, background 0.2s;
+  }
+  .edit-btn .msi { font-size: 16px; }
+  .edit-btn:hover { opacity: 1; background: var(--md-surface-container-highest); }
+  .seg-list.busy .edit-btn { display: none; }
+  .seg-editor { display: grid; gap: 6px; }
+  .seg-editor textarea {
+    width: 100%; resize: vertical; min-height: 64px; padding: 8px 10px; border: none; outline: none; border-radius: var(--shape-s);
+    background: var(--md-surface-container-lowest); color: var(--md-on-surface); box-shadow: inset 0 -2px 0 var(--md-outline-variant);
+    font-size: 0.95rem; line-height: 1.5; font-style: normal; font-weight: 400;
+  }
+  .seg-editor textarea:focus { box-shadow: inset 0 -3px 0 var(--md-primary); }
+  .seg-editor .row { display: flex; gap: 8px; justify-content: flex-end; }
+  .seg-edit { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.8rem; color: var(--md-on-surface-variant); }
+  .seg-edit .tag { height: 22px; display: inline-flex; align-items: center; padding: 0 8px; border-radius: var(--shape-xs); background: var(--md-primary-container); color: var(--md-on-primary-container); font-weight: 700; }
+  .seg-edit .tag.warn { background: var(--md-warning-container); color: var(--md-warning); }
+  .seg-edit .btn { margin-left: auto; }
+  @keyframes arrive { 0% { background: var(--md-tertiary-container); } 100% { background: transparent; } }
+  .skel { display: grid; gap: 7px; padding: 3px 0; }
+  .skel span {
+    height: 10px; border-radius: var(--shape-full);
+    background: linear-gradient(90deg, var(--md-surface-container-high) 25%, var(--md-surface-container-highest) 50%, var(--md-surface-container-high) 75%);
+    background-size: 200% 100%; animation: shimmer 1.3s infinite linear;
+  }
+  .skel span:last-child { width: 60%; }
+  @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+  .prep { padding: 26px; display: grid; gap: 16px; animation: rise 0.5s var(--emph) both; }
+  .prep h2 { margin: 0; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; }
+  .prep-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .prep-list li {
+    display: flex; align-items: center; gap: 14px; color: var(--md-outline); font-size: 0.94rem; font-weight: 500;
+    padding: 8px 10px; border-radius: var(--shape-l); transition: background 0.3s var(--emph);
+  }
+  .prep-list li .ic {
+    width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 0.78rem; font-weight: 700;
+    background: var(--md-surface-container-highest); transition: border-radius 0.5s var(--spring), background 0.3s;
+  }
+  .prep-list li.done { color: var(--md-on-surface-variant); }
+  .prep-list li.done .ic { background: var(--md-primary); color: var(--md-on-primary); border-radius: 10px; }
+  .prep-list li.active { color: var(--md-on-secondary-container); background: var(--md-secondary-container); font-weight: 700; }
+  .prep-list li.active .ic { background: transparent; }
+  .prep-list li.active .ic .spin.lg { width: 22px; height: 22px; }
+  .prep-list li.error { color: var(--md-on-error-container); background: var(--md-error-container); font-weight: 700; }
+  .prep-list li.error .ic { background: var(--md-error); color: var(--md-surface); }
+  .prep .err { color: var(--md-on-error-container); background: var(--md-error-container); padding: 12px 14px; border-radius: var(--shape-m); font-size: 0.88rem; overflow-wrap: anywhere; }
+  .prep .hint { color: var(--md-on-surface-variant); font-size: 0.86rem; margin: 0; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 50; max-width: min(560px, calc(100% - 32px));
+    background: var(--md-inverse-surface); color: var(--md-inverse-on-surface); padding: 14px 20px; border-radius: var(--shape-m);
+    box-shadow: var(--elev-3); font-size: 0.9rem; font-weight: 500; animation: pop 0.5s var(--spring);
+  }
+  @keyframes pop { from { opacity: 0; transform: translate(-50%, 16px) scale(0.92); } }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--md-outline-variant); border-radius: 10px; border: 3px solid transparent; background-clip: content-box; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+  @media (max-width: 1100px) {
+    .left-col { position: static; max-height: none; overflow: visible; }
+    .run-grid, .upload-grid, .upload-choices { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 820px) {
+    .icon-btn { display: grid; }
+    .shell { grid-template-columns: 1fr; }
+    .sidebar {
+      position: fixed; top: 72px; left: 0; bottom: 0; width: min(320px, 88vw); height: auto; z-index: 30; margin: 0;
+      border-radius: 0 var(--shape-xl) var(--shape-xl) 0; background: var(--md-surface-container-low); box-shadow: var(--elev-3);
+      transform: translateX(-104%); transition: transform 0.45s var(--emph);
+    }
+    .sidebar.open { transform: none; }
+    .steps { display: none; }
+    .brand { margin-right: auto; }
+    main { padding: 4px 16px 24px; }
+    .topbar { padding: 0 12px; gap: 8px; }
+    #newBtn .lbl { display: none; }
+    #newBtn { width: 48px; padding: 0; }
+    .run-head { flex-direction: column; align-items: flex-start; }
+  }
+  /* Debug off (the default): no explainer hints, translation-check details, prompt editor or fitting details */
+  :root:not([data-debug="on"]) :is(.hint:not(#prepHint):not(#promptMsg), .dbg, .seg-review, #promptBtn) { display: none !important; }
+  #debugBtn[aria-pressed="false"] { opacity: 0.55; }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <button id="menuBtn" class="icon-btn" type="button" aria-label="Past runs"><span class="msi">menu</span></button>
+    <div class="brand"><span class="logo"><span class="msi fill">graphic_eq</span></span>Dubbing Studio</div>
+    <nav class="steps" id="steps" aria-label="Progress"></nav>
+    <button id="debugBtn" class="theme-btn" type="button" aria-label="Toggle debug details" title="Debug details"><span class="msi">bug_report</span></button>
+    <button id="themeBtn" class="theme-btn" type="button" aria-label="Toggle light/dark mode"><span class="msi">dark_mode</span></button>
+    <button id="newBtn" class="btn primary" type="button"><span class="msi">add</span><span class="lbl">New video</span></button>
+  </header>
+
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-head">
+        <h2>Past runs</h2>
+        <button id="refreshRuns" class="btn small" type="button" title="Refresh"><span class="msi">refresh</span></button>
+      </div>
+      <ul class="run-list" id="runList"></ul>
+    </aside>
+
+    <main>
+      <!-- Upload: pick a video, its language and the portion to work on -->
+      <section id="uploadView">
+        <div class="upload-choices">
+        <label class="drop" id="drop">
+          <input type="file" id="fileInput" accept="video/*">
+          <div class="big-icon"><span class="msi">upload</span></div>
+          <h3>Drop a video here, or click to browse</h3>
+          <p>It's separated and diarized right after upload. Transcription starts when you ask for it.</p>
+        </label>
+
+        <div class="card yt" id="ytBox">
+          <h3><span class="badge"><span class="msi fill">smart_display</span></span>Or paste a YouTube link</h3>
+          <div class="yt-row">
+            <input type="url" id="ytUrl" placeholder="https://www.youtube.com/watch?v=…">
+            <button type="button" class="btn" id="ytCheck">Check link</button>
+          </div>
+          <div class="yt-info" id="ytInfo" hidden>
+            <div class="yt-head">
+              <img class="yt-thumb" id="ytThumb" alt="">
+              <div>
+                <div class="yt-title" id="ytTitle"></div>
+                <div class="yt-meta" id="ytMeta"></div>
+              </div>
+            </div>
+            <div class="range-inputs">
+              <label>From (m:ss)<input type="text" id="ytStart" inputmode="decimal" placeholder="0:00"></label>
+              <label>To (m:ss)<input type="text" id="ytEnd" inputmode="decimal"></label>
+            </div>
+            <div class="yt-slider">
+              <div class="range-track"><div class="range-sel" id="ytSel"></div></div>
+              <input type="range" id="ytStartSlider" min="0" step="1" aria-label="Start of the part">
+              <input type="range" id="ytEndSlider" min="0" step="1" aria-label="End of the part">
+            </div>
+            <div class="range-info"><span>0:00</span><span id="ytLength"></span><span id="ytDurLabel"></span></div>
+            <div class="yt-row">
+              <select id="ytLang" aria-label="Spoken language"><option value="">Spoken language…</option></select>
+              <select id="ytHeight" aria-label="Resolution">
+                <option value="720">720p</option><option value="480">480p</option><option value="360">360p</option>
+                <option value="240">240p</option><option value="144">144p</option>
+              </select>
+              <button type="button" class="btn small" id="ytWhole">Whole video</button>
+              <button type="button" class="btn" id="ytFetch">Download &amp; start</button>
+            </div>
+          </div>
+          <div class="upload-progress" id="ytProgress" hidden><div></div></div>
+          <p class="yt-note" id="ytNote">Up to 720p. Check the link to see its length, then pick the part to download (at most 60 minutes).</p>
+        </div>
+        </div>
+
+        <div class="upload-grid" id="uploadForm" hidden>
+          <div class="card video-card"><video id="previewVideo" controls playsinline></video></div>
+          <div class="card settings">
+            <div>
+              <h3>New run</h3>
+              <div class="file-name" id="fileName"></div>
+            </div>
+            <label class="field">
+              <span>Spoken language</span>
+              <select id="langSelect"><option value="">Select…</option></select>
+            </label>
+            <div class="field">
+              <span>Portion to process</span>
+              <div class="range-inputs">
+                <label>From (m:ss)
+                  <input type="text" id="rangeStart" inputmode="decimal" value="0:00.0">
+                  <button type="button" class="btn small" id="setStart">Set to playhead</button>
+                </label>
+                <label>To (m:ss)
+                  <input type="text" id="rangeEnd" inputmode="decimal">
+                  <button type="button" class="btn small" id="setEnd">Set to playhead</button>
+                </label>
+              </div>
+              <div class="range-track" id="rangeTrack"><div class="range-sel" id="rangeSel"></div><div class="range-head" id="rangeHead"></div></div>
+              <div class="range-info" id="rangeInfo"><span id="rangeText"></span><button type="button" class="btn small" id="rangeAll">Whole video</button></div>
+            </div>
+            <div class="upload-progress" id="uploadProgress" hidden><div></div></div>
+            <button type="button" class="btn primary big" id="uploadBtn" disabled>Upload &amp; diarize</button>
+            <button type="button" class="btn" id="otherFile">Choose another file</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- A run: video + speaker timeline on the left, segments on the right -->
+      <section id="runView" hidden>
+        <div class="run-head">
+          <div>
+            <h1 id="runName"></h1>
+            <div class="sub" id="runMeta"></div>
+          </div>
+          <div class="run-actions">
+            <span class="pill" id="runStatus"></span>
+            <a class="btn small primary" id="downloadDub" hidden download><span class="msi">download</span>Dubbed MP4</a>
+            <button type="button" class="btn small danger" id="deleteRun">Delete</button>
+          </div>
+        </div>
+        <div class="run-grid">
+          <div class="left-col">
+            <div class="card video-card">
+              <video id="runVideo" controls playsinline></video>
+              <div class="placeholder" id="videoPlaceholder"><div><span class="spin lg"></span><div>Preparing the video…</div></div></div>
+              <div class="audio-switch" id="audioSwitch" hidden>
+                Audio
+                <button type="button" class="btn small on" data-mode="original">Original</button>
+                <button type="button" class="btn small" data-mode="dubbed">Dubbed</button>
+              </div>
+              <audio id="dubAudio" preload="auto" hidden></audio>
+            </div>
+            <div class="card timeline" id="timelineCard" hidden>
+              <div class="tl-head"><h3>Speakers</h3><span id="tlTime"></span></div>
+              <div class="lanes" id="lanes"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card prep" id="prepPanel">
+              <h2>Processing</h2>
+              <ul class="prep-list" id="prepList"></ul>
+              <div class="err" id="prepError" hidden></div>
+              <p class="hint" id="prepHint">Speaker segments appear here as soon as diarization is done.</p>
+            </div>
+
+            <div class="card panel" id="segPanel" hidden>
+              <div class="panel-head">
+                <div class="panel-title"><h2>Speaker segments</h2><span id="segCount"></span></div>
+                <div class="action" id="action"></div>
+              </div>
+              <ul class="seg-list" id="segList"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast" hidden></div>
+
+  <dialog id="promptDialog" class="prompt-dialog">
+    <form method="dialog" onsubmit="return false">
+      <h2>Translation check prompt</h2>
+      <p class="hint">The system prompt sent to the checking model with each batch of segments. <code>{source}</code> and <code>{target}</code> are replaced by the language names. The segments go in as the user message, and the reply format (JSON with an <code>edits</code> list) is enforced separately. Saved for this run only.</p>
+      <textarea id="promptText" spellcheck="false" rows="20"></textarea>
+      <p class="hint" id="promptMsg"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="promptReset">Load default</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn" id="promptCancel">Cancel</button>
+        <button type="button" class="btn primary" id="promptSave">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// Theme: light unless the user picked dark with the top-bar button
+(() => {
+  const root = document.documentElement;
+  let saved = null;
+  try { saved = localStorage.getItem('theme'); } catch (e) {}
+  if (saved) root.dataset.theme = saved;
+  const isDark = () => root.dataset.theme === 'dark';
+  const paint = () => { $('themeBtn').firstElementChild.textContent = isDark() ? 'light_mode' : 'dark_mode'; };
+  $('themeBtn').onclick = () => {
+    root.dataset.theme = isDark() ? 'light' : 'dark';
+    try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+    paint();
+  };
+  paint();
+})();
+
+// Debug details: hidden unless switched on with the top-bar button
+(() => {
+  const root = document.documentElement;
+  let saved = null;
+  try { saved = localStorage.getItem('debug'); } catch (e) {}
+  root.dataset.debug = saved === 'on' ? 'on' : 'off';
+  const paint = () => { $('debugBtn').setAttribute('aria-pressed', root.dataset.debug === 'on'); };
+  $('debugBtn').onclick = () => {
+    root.dataset.debug = root.dataset.debug === 'on' ? 'off' : 'on';
+    try { localStorage.setItem('debug', root.dataset.debug); } catch (e) {}
+    paint();
+  };
+  paint();
+})();
+
+// Statuses while the server runs a step in the background (polled until another comes)
+const RUNNING = ['uploaded', 'trimming', 'extracting_audio', 'separating', 'diarizing', 'chunking', 'transcribing', 'translating', 'reviewing', 'synthesizing', 'dubbing', 'lipsync_queued', 'lipsync_analysing', 'lipsyncing', 'refreshing'];
+// Steps before the segments exist, in order
+const PREP = [
+  ['uploaded', 'Upload received'],
+  ['trimming', 'Cut out the portion'],
+  ['extracting_audio', 'Extract the audio'],
+  ['separating', 'Separate voices from background'],
+  ['diarizing', 'Find who speaks when'],
+  ['chunking', 'Build speaker segments'],
+];
+const COLORS = ['#4f7cff', '#f2734b', '#22b07d', '#b45cf0', '#e8a72c', '#1fb5c9', '#e2557f', '#8a9a2e'];
+const color = s => COLORS[(s - 1) % COLORS.length];
+
+// A speaker's face in a circle ringed in their colour (sp.face_url, made at diarization); a circle with their
+// number when they have none (never clearly seen talking) or it fails to load
+function speakerAvatar(sp) {
+  const badge = () => {
+    const b = document.createElement('span');
+    b.className = 'avatar';
+    b.textContent = sp.speaker;
+    return b;
+  };
+  if (!sp.face_url) return badge();
+  const img = new Image();
+  img.className = 'avatar';
+  img.src = sp.face_url;
+  img.alt = '';
+  img.addEventListener('error', () => img.replaceWith(badge()), { once: true });
+  return img;
+}
+
+let current = null;     // the run record on screen
+let localVideo = null;  // {runId, url}: an untrimmed upload from this tab plays from the local file
+let pollToken = 0;      // a newer poll ends older ones
+let activeIdx = -1;
+let toastTimer = null;
+
+// --- helpers ---
+
+async function readJson(res) {
+  const body = await res.text();
+  try {
+    return JSON.parse(body);
+  } catch (err) {
+    throw new Error(`HTTP ${res.status} ${res.statusText}: ${body.slice(0, 200) || '(empty reply)'}`);
+  }
+}
+
+function fmt(t) {
+  if (!isFinite(t)) return '–';
+  const m = Math.floor(t / 60);
+  return `${m}:${(t - m * 60).toFixed(1).padStart(4, '0')}`;
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return isNaN(d) ? iso : d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function portionText(range) {
+  if (!range) return 'whole video';
+  return `${fmt(range[0])}–${range[1] == null ? 'end' : fmt(range[1])}`;
+}
+
+function toast(msg) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.hidden = true; }, 6000);
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// --- header steps: Upload → Diarize → Transcribe → Translate → Dub ---
+
+// The step after each finished stage; a dubbed run is complete unless it's being dubbed again
+const NEXT_STEP = { null: 1, diarized: 2, transcribed: 3, translated: 4, dubbed: 5 };
+
+function stepStates(rec) {
+  if (!rec) return ['active', 'todo', 'todo', 'todo', 'todo'];
+  const run = rec.status === 'error' ? 'error' : RUNNING.includes(rec.status) ? 'active' : 'waiting';
+  let at = NEXT_STEP[rec.stage] ?? 1;
+  if (rec.stage === 'dubbed' && run !== 'waiting') at = 4;
+  if (rec.status === 'reviewing') at = 3;  // the check belongs to the Translate step
+  if (rec.status === 'refreshing' && rec.stage !== 'dubbed') at = 3;  // an edited segment translated again
+  return [0, 1, 2, 3, 4].map(i =>
+    i < at ? 'done' : i > at ? 'todo' : run);
+}
+
+function renderSteps(rec) {
+  const names = ['Upload', 'Diarize', 'Transcribe', 'Translate', 'Dub'];
+  const states = stepStates(rec);
+  const nav = $('steps');
+  nav.innerHTML = '';
+  names.forEach((name, i) => {
+    if (i) {
+      const line = document.createElement('span');
+      line.className = 'step-line' + (states[i - 1] === 'done' ? ' done' : '');
+      nav.appendChild(line);
+    }
+    const st = states[i];
+    const el = document.createElement('span');
+    el.className = `step ${st}`;
+    const mark = st === 'done' ? '✓' : st === 'error' ? '!' : st === 'active' ? '<span class="spin"></span>' : i + 1;
+    el.innerHTML = `<span class="dot">${mark}</span><span class="label">${name}</span>`;
+    if (st === 'waiting') el.title = 'Waiting for you';
+    nav.appendChild(el);
+  });
+}
+
+// --- sidebar: past runs ---
+
+let runsTimer = null;
+
+function pillFor(r) {
+  if (r.status === 'error') return ['bad', 'Failed'];
+  if (r.status === 'transcribing') return ['busy', 'Transcribing', true];
+  if (r.status === 'translating') return ['busy', 'Translating', true];
+  if (r.status === 'reviewing') return ['busy', 'Checking translation', true];
+  if (r.status === 'synthesizing') return ['busy', 'Generating speech', true];
+  if (r.status === 'dubbing') return ['busy', 'Mixing dub', true];
+  if (r.status === 'lipsync_queued') return ['busy', 'Waiting for GPU', true];
+  if (r.status === 'lipsync_analysing' || r.status === 'lipsyncing') return ['busy', 'Lip-syncing', true];
+  if (r.status === 'refreshing') return ['busy', 'Updating a segment', true];
+  if (r.stage === 'dubbed') return ['ok', r.lipsync ? 'Lip-synced' : 'Dubbed'];
+  if (RUNNING.includes(r.status)) return ['busy', 'Processing', true];
+  if (r.stage === 'translated') return ['ok', 'Translated'];
+  if (r.stage === 'transcribed') return ['ok', 'Transcribed'];
+  if (r.stage === 'diarized') return ['wait', 'Diarized'];
+  return ['', r.status || '?'];
+}
+
+function setPill(el, [cls, text, spinning]) {
+  el.className = `pill ${cls}`;
+  el.innerHTML = (spinning ? '<span class="spin"></span>' : '') + text;
+}
+
+async function refreshRuns() {
+  clearTimeout(runsTimer);
+  let list;
+  try {
+    const res = await fetch('/v2/runs');
+    list = await readJson(res);
+    if (!res.ok) throw new Error(list.detail || res.statusText);
+  } catch (err) {
+    $('runList').innerHTML = `<li class="side-empty">Couldn't load past runs: ${err.message}</li>`;
+    return;
+  }
+  const ul = $('runList');
+  ul.innerHTML = '';
+  if (!list.length) ul.innerHTML = '<li class="side-empty">No runs yet. Upload a video to start.</li>';
+  for (const r of list) {
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'run-item' + (current && current.run_id === r.run_id ? ' active' : '');
+    b.dataset.id = r.run_id;
+    b.innerHTML = '<div class="row1"><span class="name"></span><span class="pill"></span></div><div class="meta"></div>';
+    b.querySelector('.name').textContent = r.name || r.run_id.slice(0, 8);
+    b.querySelector('.name').title = r.name || '';
+    setPill(b.querySelector('.pill'), pillFor(r));
+    const bits = [fmtDate(r.created), r.language];
+    if (r.segments) bits.push(`${r.segments} segments`);
+    if (r.range) bits.push(portionText(r.range));
+    b.querySelector('.meta').textContent = bits.filter(Boolean).join(' · ');
+    b.addEventListener('click', () => {
+      $('sidebar').classList.remove('open');
+      openRun(r.run_id);
+    });
+    li.appendChild(b);
+    ul.appendChild(li);
+  }
+  // runs being processed elsewhere keep the list fresh
+  if (list.some(r => RUNNING.includes(r.status))) runsTimer = setTimeout(refreshRuns, 4000);
+}
+
+function markActiveRun() {
+  for (const b of document.querySelectorAll('.run-item')) {
+    b.classList.toggle('active', !!current && b.dataset.id === current.run_id);
+  }
+}
+
+$('refreshRuns').addEventListener('click', refreshRuns);
+$('menuBtn').addEventListener('click', () => $('sidebar').classList.toggle('open'));
+
+// --- upload view ---
+
+const fileInput = $('fileInput');
+const previewVideo = $('previewVideo');
+const langSelect = $('langSelect');
+let targetLangs = [];  // [{code, name}] the translation API accepts
+let preferredVoices = {};  // {target lang: {female: [...], male: [...]}}, best first, from /tts-options
+const rangeStart = $('rangeStart');
+const rangeEnd = $('rangeEnd');
+let pickedFile = null;
+let previewUrl = null;
+
+fetch('/languages')
+  .then(readJson)
+  .then(langs => {
+    for (const { code, name } of langs.asr) {
+      const opt = document.createElement('option');
+      opt.value = code;
+      opt.textContent = name;
+      langSelect.appendChild(opt);
+      $('ytLang').add(new Option(name, code));
+    }
+    targetLangs = langs.translation;
+    if (current && current.stage) renderAction(current);
+  })
+  .catch(err => toast('Could not load languages: ' + err.message));
+
+fetch('/tts-options')
+  .then(readJson)
+  .then(opts => {
+    preferredVoices = opts.preferred || {};
+    if (current && current.stage) renderAction(current);
+  })
+  .catch(err => toast('Could not load voices: ' + err.message));
+
+function showUploadView() {
+  pollToken++;
+  current = null;
+  history.replaceState(null, '', location.pathname);
+  $('runView').hidden = true;
+  $('uploadView').hidden = false;
+  $('runVideo').pause();
+  renderSteps(null);
+  markActiveRun();
+}
+
+function pickFile(file) {
+  if (!file) return;
+  cancelYt();
+  pickedFile = file;
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  previewUrl = URL.createObjectURL(file);
+  previewVideo.src = previewUrl;
+  $('fileName').textContent = file.name;
+  rangeStart.value = clockInput(0);
+  rangeEnd.value = '';
+  $('drop').hidden = true;
+  $('ytBox').hidden = true;
+  $('uploadForm').hidden = false;
+  $('uploadProgress').hidden = true;
+  $('uploadBtn').textContent = 'Upload & diarize';
+  refreshForm();
+}
+
+// --- YouTube: check the link, pick a part, download only that, then preview it like an upload ---
+
+let ytPoll = 0;
+let ytChecked = null;  // {url, title, duration, thumbnail, uploader, max_seconds} of the checked link
+const YT_NOTE = 'Up to 720p. Check the link to see its length, then pick the part to download (at most 60 minutes). The run starts as soon as it\'s downloaded.';
+
+function ytNote(text, bad) {
+  $('ytNote').textContent = text;
+  $('ytNote').classList.toggle('bad', !!bad);
+}
+
+// stops waiting on a YouTube download; the polling loop then discards it
+function cancelYt() {
+  ytPoll++;
+}
+
+// 75 → "1:15", 3725 → "1:02:05"
+function fmtClock(t) {
+  t = Math.round(t);
+  const h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, s = String(t % 60).padStart(2, '0');
+  return h ? `${h}:${String(m).padStart(2, '0')}:${s}` : `${m}:${s}`;
+}
+
+// "1:02:05", "1:15" or "75.5" → seconds; NaN if it isn't a time
+function parseClock(text) {
+  const parts = text.trim().split(':');
+  if (parts.length > 3 || parts.some(p => !/^\d+(\.\d+)?$/.test(p))) return NaN;
+  return parts.reduce((acc, p) => acc * 60 + Number(p), 0);
+}
+
+// {start, end} of the part to download, null for the whole video, or an error message
+function ytSection() {
+  const d = ytChecked.duration;
+  const start = parseClock($('ytStart').value || '0');
+  const end = parseClock($('ytEnd').value || String(d));
+  if (isNaN(start) || isNaN(end)) return 'Write times like 1:15 or 1:02:05.';
+  if (end > d + 0.5) return `The video is only ${fmtClock(d)} long.`;
+  if (end - start < 0.5) return 'The end must be after the start.';
+  if (end - start > ytChecked.max_seconds) return `At most ${ytChecked.max_seconds / 60} minutes can be downloaded at once.`;
+  return start <= 0 && end >= d ? null : { start, end: Math.min(end, d) };
+}
+
+function refreshYt() {
+  const d = ytChecked.duration;
+  const sec = ytSection();
+  const bad = typeof sec === 'string';
+  const { start, end } = sec && !bad ? sec : { start: 0, end: d };
+  $('ytSel').style.left = `${100 * start / d}%`;
+  $('ytSel').style.width = bad ? '0' : `${100 * (end - start) / d}%`;
+  if (!bad) {  // typed times move the handles too
+    $('ytStartSlider').value = start;
+    $('ytEndSlider').value = end;
+    // near the end the start handle goes on top, so two handles at the end can still be pulled apart
+    $('ytStartSlider').style.zIndex = start > d / 2 ? 2 : '';
+  }
+  $('ytLength').textContent = bad ? '' : fmtClock(end - start);
+  $('ytFetch').disabled = bad || !$('ytLang').value || $('ytCheck').disabled;  // not while downloading
+  if (bad) ytNote(sec, true);
+  else if (!$('ytLang').value) ytNote('Pick the spoken language.');
+  else if (sec) ytNote(`Downloads ${fmtClock(end - start)}: ${fmtClock(start)} to ${fmtClock(end)} of ${fmtClock(d)}.`);
+  else ytNote(`Downloads the whole video (${fmtClock(d)}).`);
+}
+
+$('ytStart').addEventListener('input', refreshYt);
+$('ytLang').addEventListener('change', refreshYt);
+$('ytEnd').addEventListener('input', refreshYt);
+// dragging a handle keeps the part at least 1 s and at most max_seconds long, pushing the other handle if needed
+function slideYt(moved) {
+  const d = ytChecked.duration, max = ytChecked.max_seconds;
+  let start = Number($('ytStartSlider').value), end = Number($('ytEndSlider').value);
+  if (moved === 'start') {
+    start = Math.min(start, d - 1);
+    end = Math.min(Math.max(end, start + 1), start + max);
+  } else {
+    end = Math.max(end, 1);
+    start = Math.max(Math.min(start, end - 1), end - max);
+  }
+  $('ytStart').value = fmtClock(start);
+  $('ytEnd').value = fmtClock(end);
+  refreshYt();
+}
+
+$('ytStartSlider').addEventListener('input', () => slideYt('start'));
+$('ytEndSlider').addEventListener('input', () => slideYt('end'));
+$('ytWhole').addEventListener('click', () => {
+  $('ytStart').value = '0:00';
+  $('ytEnd').value = fmtClock(ytChecked.duration);
+  refreshYt();
+});
+$('ytUrl').addEventListener('input', () => {  // a new link needs a new check
+  if ($('ytCheck').disabled) return;  // checking or downloading
+  ytChecked = null;
+  $('ytInfo').hidden = true;
+  ytNote(YT_NOTE);
+});
+$('ytUrl').addEventListener('keydown', e => { if (e.key === 'Enter') $('ytCheck').click(); });
+
+$('ytCheck').addEventListener('click', async () => {
+  const btn = $('ytCheck');
+  btn.disabled = true;
+  ytChecked = null;
+  $('ytInfo').hidden = true;
+  ytNote('Checking the link…');
+  try {
+    const res = await fetch('/v2/youtube/info', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: $('ytUrl').value.trim() }),
+    });
+    const info = await readJson(res);
+    if (!res.ok) throw new Error(info.detail || res.statusText);
+    ytChecked = info;
+    $('ytThumb').hidden = !info.thumbnail;
+    $('ytThumb').src = info.thumbnail || '';
+    $('ytTitle').textContent = info.title;
+    $('ytMeta').textContent = [fmtClock(info.duration), info.uploader].filter(Boolean).join(' · ');
+    $('ytStartSlider').max = $('ytEndSlider').max = info.duration;
+    $('ytDurLabel').textContent = fmtClock(info.duration);
+    $('ytStart').value = '0:00';
+    $('ytEnd').value = fmtClock(Math.min(info.duration, info.max_seconds));
+    $('ytInfo').hidden = false;
+    refreshYt();
+  } catch (err) {
+    ytNote(err.message, true);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$('ytFetch').addEventListener('click', async () => {
+  const sec = ytSection();
+  const language = $('ytLang').value;
+  if (typeof sec === 'string' || !language) return;
+  const btn = $('ytFetch');
+  const token = ++ytPoll;
+  btn.disabled = $('ytCheck').disabled = true;
+  $('ytProgress').hidden = true;
+  ytNote('Starting the download…');
+  try {
+    const res = await fetch('/v2/youtube', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: ytChecked.url, height: Number($('ytHeight').value), ...(sec || {}) }),
+    });
+    let rec = await readJson(res);
+    if (!res.ok) throw new Error(rec.detail || res.statusText);
+    const bar = $('ytProgress');
+    bar.hidden = false;
+    while (token === ytPoll && rec.status !== 'ready' && rec.status !== 'error') {
+      bar.firstElementChild.style.width = `${rec.percent || 0}%`;
+      ytNote(rec.status !== 'downloading' ? 'Checking the link…'
+        : rec.section ? `Downloading and cutting ${fmtClock(rec.section[0])} to ${fmtClock(rec.section[1])} of "${rec.title}"… ${Math.round(rec.percent || 0)}%`
+        : `Downloading "${rec.title}"… ${Math.round(rec.percent || 0)}%`);
+      await new Promise(r => setTimeout(r, 1000));
+      if (token !== ytPoll) break;
+      const r2 = await fetch(`/v2/youtube/${rec.fetch_id}`);
+      const next = await readJson(r2);
+      if (!r2.ok) throw new Error(next.detail || r2.statusText);
+      rec = next;
+    }
+    if (token !== ytPoll) {  // the user moved on; drop the download
+      fetch(`/v2/youtube/${rec.fetch_id}`, { method: 'DELETE' }).catch(() => {});
+      return;
+    }
+    bar.hidden = true;
+    if (rec.status === 'error') { ytNote(rec.error || 'The download failed.', true); return; }
+    await startYoutubeRun(rec, language);
+  } catch (err) {
+    $('ytProgress').hidden = true;
+    ytNote(err.message, true);
+  } finally {
+    $('ytCheck').disabled = false;
+    btn.disabled = !!ytChecked && (typeof ytSection() === 'string' || !$('ytLang').value);
+  }
+});
+
+// a finished download goes straight into a new run: the part was already picked before downloading
+async function startYoutubeRun(rec, language) {
+  ytNote(`Starting the run for "${rec.title}"…`);
+  const form = new FormData();
+  form.append('fetch_id', rec.fetch_id);
+  form.append('language', language);
+  const res = await fetch('/v2/runs', { method: 'POST', body: form });
+  const run = await readJson(res);
+  if (!res.ok) {
+    fetch(`/v2/youtube/${rec.fetch_id}`, { method: 'DELETE' }).catch(() => {});
+    throw new Error('Could not start the run: ' + (run.detail || res.statusText));
+  }
+  ytChecked = null;
+  $('ytInfo').hidden = true;
+  $('ytUrl').value = '';
+  ytNote(YT_NOTE);
+  showRecord(run);
+  refreshRuns();
+}
+
+fileInput.addEventListener('change', () => pickFile(fileInput.files[0]));
+const drop = $('drop');
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+drop.addEventListener('drop', e => {
+  e.preventDefault();
+  drop.classList.remove('over');
+  const file = [...e.dataTransfer.files].find(f => f.type.startsWith('video/')) || e.dataTransfer.files[0];
+  pickFile(file);
+});
+$('otherFile').addEventListener('click', () => {
+  fileInput.value = '';
+  fileInput.click();
+});
+
+// a time for the portion inputs, to the tenth: 75.04 → "1:15.0"
+const clockInput = t => fmt(Math.round(t * 10) / 10);
+
+// {start, end} for a portion, null for the whole video, false when the inputs are invalid
+function selectedRange() {
+  const dur = previewVideo.duration;
+  const a = rangeStart.value.trim() === '' ? 0 : parseClock(rangeStart.value);
+  const b = rangeEnd.value.trim() === '' ? dur : parseClock(rangeEnd.value);
+  if (isNaN(a) || isNaN(b)) return false;
+  if (!isFinite(dur)) return a > 0 ? { start: a } : null;
+  if (a < 0 || !(b > a + 0.5)) return false;
+  if (a <= 0.05 && b >= dur - 0.05) return null;
+  return { start: a, end: Math.min(b, dur) };
+}
+
+function refreshForm() {
+  const dur = previewVideo.duration;
+  const r = selectedRange();
+  const info = $('rangeInfo');
+  info.classList.toggle('bad', r === false);
+  $('rangeText').textContent = r === false ? 'Times are m:ss; the end must be at least 0.5 s after the start.'
+    : r === null ? `Whole video${isFinite(dur) ? ` (${fmt(dur)})` : ''}`
+    : r.end === undefined ? `From ${fmt(r.start)} to the end`
+    : `${fmt(r.start)} – ${fmt(r.end)} (${(r.end - r.start).toFixed(1)} s)`;
+  if (isFinite(dur) && dur > 0) {
+    const a = r ? r.start : 0;
+    const b = r && r.end !== undefined ? r.end : dur;
+    $('rangeSel').style.left = `${(Math.min(a, dur) / dur) * 100}%`;
+    $('rangeSel').style.width = `${Math.max(0, (b - a) / dur) * 100}%`;
+    $('rangeSel').style.opacity = r === false ? 0.25 : 0.85;
+  }
+  $('uploadBtn').disabled = !pickedFile || !langSelect.value || r === false;
+}
+
+previewVideo.addEventListener('loadedmetadata', () => {
+  if (rangeEnd.value === '') rangeEnd.value = clockInput(previewVideo.duration);
+  refreshForm();
+});
+previewVideo.addEventListener('timeupdate', () => {
+  const dur = previewVideo.duration;
+  if (isFinite(dur) && dur > 0) $('rangeHead').style.left = `${(previewVideo.currentTime / dur) * 100}%`;
+});
+$('rangeTrack').addEventListener('click', e => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  if (isFinite(previewVideo.duration)) previewVideo.currentTime = ((e.clientX - rect.left) / rect.width) * previewVideo.duration;
+});
+rangeStart.addEventListener('input', refreshForm);
+rangeEnd.addEventListener('input', refreshForm);
+langSelect.addEventListener('change', refreshForm);
+$('setStart').addEventListener('click', () => { rangeStart.value = clockInput(previewVideo.currentTime); refreshForm(); });
+$('setEnd').addEventListener('click', () => { rangeEnd.value = clockInput(previewVideo.currentTime); refreshForm(); });
+$('rangeAll').addEventListener('click', () => {
+  rangeStart.value = clockInput(0);
+  rangeEnd.value = isFinite(previewVideo.duration) ? clockInput(previewVideo.duration) : '';
+  refreshForm();
+});
+
+// XMLHttpRequest rather than fetch, for upload progress
+$('uploadBtn').addEventListener('click', () => {
+  const range = selectedRange();
+  if (!pickedFile || range === false) return;
+  const form = new FormData();
+  form.append('file', pickedFile);
+  form.append('language', langSelect.value);
+  if (range) {
+    form.append('range_start', range.start);
+    if (range.end !== undefined) form.append('range_end', range.end);
+  }
+
+  const btn = $('uploadBtn');
+  const bar = $('uploadProgress');
+  btn.disabled = true;
+  btn.textContent = 'Uploading…';
+  bar.hidden = false;
+  bar.firstElementChild.style.width = '0';
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/v2/runs');
+  xhr.upload.addEventListener('progress', e => {
+    if (!e.lengthComputable) return;
+    const pct = Math.round((e.loaded / e.total) * 100);
+    bar.firstElementChild.style.width = `${pct}%`;
+    btn.textContent = `Uploading… ${pct}%`;
+  });
+  const done = () => { btn.textContent = 'Upload & diarize'; refreshForm(); };
+  xhr.addEventListener('load', () => {
+    done();
+    let rec;
+    try { rec = JSON.parse(xhr.responseText); } catch (err) { rec = { detail: xhr.responseText.slice(0, 200) }; }
+    if (xhr.status >= 400) { toast('Upload failed: ' + (rec.detail || xhr.statusText)); return; }
+    // the untrimmed file plays from memory right away; a portion plays from the server's cut
+    localVideo = range || !previewUrl ? null : { runId: rec.run_id, url: previewUrl };
+    if (!range) previewUrl = null;  // now owned by the run view
+    previewVideo.removeAttribute('src');
+    previewVideo.load();
+    pickedFile = null;
+    fileInput.value = '';
+    $('uploadForm').hidden = true;
+    $('drop').hidden = false;
+    $('ytBox').hidden = false;
+    showRecord(rec);
+    refreshRuns();
+  });
+  xhr.addEventListener('error', () => { done(); toast('Upload failed: network error'); });
+  xhr.send(form);
+});
+
+$('newBtn').addEventListener('click', showUploadView);
+
+// --- run view ---
+
+const runVideo = $('runVideo');
+
+async function openRun(runId) {
+  try {
+    const res = await fetch(`/v2/runs/${runId}`);
+    const rec = await readJson(res);
+    if (!res.ok) throw new Error(rec.detail || res.statusText);
+    showRecord(rec);
+  } catch (err) {
+    toast('Could not open the run: ' + err.message);
+  }
+}
+
+function showRecord(rec) {
+  pollToken++;
+  const switching = !current || current.run_id !== rec.run_id;
+  if (switching) {
+    current = null;
+    activeIdx = -1;
+    $('segList').innerHTML = '';
+    $('lanes').innerHTML = '';
+    runVideo.removeAttribute('src');
+    delete runVideo.dataset.src;
+    runVideo.load();
+    setAudioMode('original');
+    useDub({});
+  }
+  $('uploadView').hidden = true;
+  $('runView').hidden = false;
+  history.replaceState(null, '', `#run=${rec.run_id}`);
+  render(rec);
+  markActiveRun();
+  if (RUNNING.includes(rec.status)) poll(rec.run_id);
+}
+
+$('deleteRun').addEventListener('click', async () => {
+  if (!current) return;
+  const rec = current;
+  if (!confirm(`Delete "${rec.name || rec.run_id}"? Its video, audio, segments and transcripts are removed for good.`)) return;
+  const btn = $('deleteRun');
+  btn.disabled = true;
+  try {
+    const res = await fetch(`/v2/runs/${rec.run_id}`, { method: 'DELETE' });
+    const body = await readJson(res);
+    if (!res.ok) throw new Error(body.detail || res.statusText);
+  } catch (err) {
+    btn.disabled = false;
+    toast('Could not delete the run: ' + err.message);
+    return;
+  }
+  if (localVideo && localVideo.runId === rec.run_id) localVideo = null;
+  if (current && current.run_id === rec.run_id) showUploadView();
+  refreshRuns();
+  toast('Run deleted');
+});
+
+async function poll(runId) {
+  const token = ++pollToken;
+  let failures = 0;
+  while (token === pollToken) {
+    await sleep(800);
+    if (token !== pollToken) return;
+    try {
+      const res = await fetch(`/v2/runs/${runId}`);
+      const rec = await readJson(res);
+      if (!res.ok) throw new Error(rec.detail || res.statusText);
+      if (token !== pollToken) return;
+      failures = 0;
+      const stageChanged = current && (current.stage !== rec.stage || current.status !== rec.status);
+      render(rec);
+      if (stageChanged) refreshRuns();
+      if (!RUNNING.includes(rec.status)) return;
+    } catch (err) {
+      if (++failures === 3) toast('Lost contact with the server, still retrying… ' + err.message);
+    }
+  }
+}
+
+// --- Original / Dubbed audio: in Dubbed mode the video is muted and dubbed_audio.wav plays in sync ---
+
+const dubAudio = $('dubAudio');
+const modeButtons = document.querySelectorAll('#audioSwitch button');
+let audioMode = 'original';
+let dubUrl = null;
+const extAudio = () => audioMode === 'dubbed';
+
+// Once lip-synced, Dubbed mode shows the lip-synced video and Original mode the original one
+let originalSrc = null;
+let lipsyncSrc = null;
+let swapToken = 0;
+
+// Points the player at the mode's video; with carry, a swap keeps the position, speed and play state
+function showVideo(carry) {
+  const src = lipsyncSrc && audioMode === 'dubbed' ? lipsyncSrc : originalSrc;
+  if (!src || runVideo.dataset.src === src) return;
+  const at = runVideo.currentTime;
+  const rate = runVideo.playbackRate;
+  const playing = !runVideo.paused;
+  const token = ++swapToken;
+  dubAudio.pause();
+  runVideo.src = src;
+  runVideo.dataset.src = src;
+  if (!carry || !(at > 0 || playing)) return;
+  runVideo.addEventListener('loadedmetadata', () => {
+    if (token !== swapToken) return;  // switched again before this one loaded
+    runVideo.currentTime = Math.min(at, runVideo.duration || at);
+    runVideo.playbackRate = rate;
+    if (playing) runVideo.play().catch(() => {});
+  }, { once: true });
+}
+
+function syncDub(force) {
+  if (!extAudio()) return;
+  if (force || Math.abs(dubAudio.currentTime - runVideo.currentTime) > 0.25) dubAudio.currentTime = runVideo.currentTime;
+}
+
+function playDub() {
+  if (!extAudio()) return;
+  syncDub(true);
+  dubAudio.play().catch(() => {});
+}
+
+function setAudioMode(mode) {
+  audioMode = mode;
+  for (const b of modeButtons) b.classList.toggle('on', b.dataset.mode === mode);
+  showVideo(true);
+  if (dubUrl && dubAudio.dataset.src !== dubUrl) {
+    dubAudio.src = dubUrl;
+    dubAudio.dataset.src = dubUrl;
+  }
+  if (extAudio()) {
+    runVideo.muted = true;
+    dubAudio.volume = runVideo.volume;
+    dubAudio.playbackRate = runVideo.playbackRate;
+    if (!runVideo.paused) playDub(); else syncDub(true);
+  } else {
+    dubAudio.pause();
+    runVideo.muted = false;
+  }
+}
+
+// shows the switch once a run has a dub; a new dub (dubbed again) gets a fresh URL
+// Cache key of the dub's or the lip-sync's files: its timing, and the count of segment refreshes (which
+// rewrite them in place)
+function fileVersion(rec, what) {
+  return encodeURIComponent(`${rec.timings && rec.timings[what]}-${rec.refreshes || 0}`);
+}
+
+function useDub(rec) {
+  const url = rec.dubbed_audio_url ? `${rec.dubbed_audio_url}?v=${fileVersion(rec, 'dub')}` : null;
+  $('audioSwitch').hidden = !url;
+  dubUrl = url;
+  if (!url) {
+    if (dubAudio.dataset.src) {
+      setAudioMode('original');
+      dubAudio.removeAttribute('src');
+      delete dubAudio.dataset.src;
+      dubAudio.load();
+    }
+    return;
+  }
+  setAudioMode(audioMode);
+}
+
+for (const b of modeButtons) b.addEventListener('click', () => setAudioMode(b.dataset.mode));
+runVideo.addEventListener('play', playDub);
+runVideo.addEventListener('playing', playDub);
+runVideo.addEventListener('pause', () => dubAudio.pause());
+runVideo.addEventListener('waiting', () => dubAudio.pause());
+runVideo.addEventListener('seeked', () => syncDub(true));
+runVideo.addEventListener('timeupdate', () => syncDub(false));
+runVideo.addEventListener('ratechange', () => { dubAudio.playbackRate = runVideo.playbackRate; });
+runVideo.addEventListener('volumechange', () => {
+  dubAudio.volume = runVideo.volume;
+  if (extAudio() && !runVideo.muted) runVideo.muted = true;  // the video's own sound stays off
+});
+dubAudio.addEventListener('loadedmetadata', () => {
+  if (!extAudio()) return;
+  if (runVideo.paused) syncDub(true); else playDub();
+});
+
+function render(rec) {
+  const prev = current;
+  if (prev && prev.run_id === rec.run_id && prev.version === rec.version) return;
+  current = rec;
+
+  $('runName').textContent = rec.name || rec.run_id;
+  const meta = [rec.language_name, portionText(rec.range), fmtDate(rec.created)];
+  $('runMeta').textContent = meta.filter(Boolean).join(' · ');
+  setPill($('runStatus'), pillFor(rec));
+  // a running step must finish first
+  $('deleteRun').disabled = RUNNING.includes(rec.status);
+  $('deleteRun').title = RUNNING.includes(rec.status) ? 'Wait for the current step to finish' : 'Delete this run';
+  // the lip-synced video once there is one, else the dubbed video (dub as the default audio track); a running
+  // step may be rewriting it
+  const dl = $('downloadDub');
+  const lipsynced = !!rec.lipsync_video_url;
+  const videoUrl = lipsynced ? rec.lipsync_video_url : rec.dubbed_video_url;
+  dl.hidden = !videoUrl;
+  if (videoUrl) {
+    const busy = RUNNING.includes(rec.status);
+    dl.href = `${videoUrl}?v=${fileVersion(rec, lipsynced ? 'lipsync' : 'dub')}`;
+    dl.download = `${(rec.name || rec.run_id).replace(/\.[^.]+$/, '')}_${rec.target_language || 'dubbed'}${lipsynced ? '_lipsynced' : ''}.mp4`;
+    dl.innerHTML = `<span class="msi">download</span>${lipsynced ? 'Lip-synced MP4' : 'Dubbed MP4'}`;
+    dl.setAttribute('aria-disabled', busy);
+    dl.title = busy
+      ? 'Wait for the current step to finish'
+      : lipsynced ? 'Download the lip-synced video' : 'Download the video with the dubbed audio';
+  }
+  renderSteps(rec);
+
+  // the lip-synced video plays in Dubbed mode once it is done (see showVideo)
+  originalSrc = localVideo && localVideo.runId === rec.run_id ? localVideo.url : rec.input_url;
+  lipsyncSrc = rec.lipsync_video_url && rec.dubbed_audio_url
+    ? `${rec.lipsync_video_url}?v=${fileVersion(rec, 'lipsync')}`
+    : null;
+  showVideo(!!prev && prev.run_id === rec.run_id);
+  runVideo.hidden = !originalSrc;
+  $('videoPlaceholder').hidden = !!originalSrc;
+  useDub(rec);
+
+  const diarized = !!rec.stage;
+  $('prepPanel').hidden = diarized;
+  $('segPanel').hidden = !diarized;
+  $('timelineCard').hidden = !diarized;
+  if (!diarized) {
+    renderPrep(rec);
+    return;
+  }
+  renderAction(rec);
+  renderSegments(rec);
+  renderTimeline(rec);
+}
+
+function renderPrep(rec) {
+  const ul = $('prepList');
+  ul.innerHTML = '';
+  const steps = PREP.filter(([k]) => k !== 'trimming' || rec.range);
+  const failed = rec.status === 'error';
+  const at = steps.findIndex(([k]) => k === (failed ? rec.failed_at : rec.status));
+  for (const [i, [key, label]] of steps.entries()) {
+    const li = document.createElement('li');
+    let st = 'todo';
+    if (at < 0) st = failed ? 'todo' : 'done';
+    else if (i < at) st = 'done';
+    else if (i === at) st = failed ? 'error' : key === 'uploaded' ? 'done' : 'active';
+    li.className = st;
+    const icon = { done: '✓', error: '!', active: '<span class="spin lg"></span>' }[st] || '';
+    li.innerHTML = `<span class="ic">${icon}</span>`;
+    li.append(label);
+    ul.appendChild(li);
+  }
+  $('prepError').hidden = !failed;
+  $('prepError').textContent = failed ? rec.error : '';
+  $('prepHint').textContent = failed
+    ? 'This run stopped before its segments were ready. Upload the video again to retry.'
+    : 'Speaker segments appear here as soon as diarization is done.';
+}
+
+function renderAction(rec) {
+  const box = $('action');
+  const n = rec.asr_total || rec.segments.length;
+  const done = rec.asr_done || 0;
+  const tn = rec.translate_total || 0;
+  const tdone = rec.translate_done || 0;
+  const bar = (label, d, total, hint) => `
+      <div class="row"><strong>${label}</strong><span class="count">${d} / ${total} segments</span></div>
+      <div class="bar"><div style="width:${total ? (d / total) * 100 : 0}%"></div></div>
+      <p class="hint">${hint}</p>`;
+  if (rec.status === 'transcribing') {
+    const next = rec.target_language ? ` Translation to ${rec.target_language_name} follows.` : '';
+    const note = rec.asr_note ? `<p class="hint"><span class="spin"></span> ${esc(rec.asr_note)}</p>` : '';
+    box.innerHTML = bar('Transcribing', done, n, `Each segment's text appears as soon as it comes back.${next}`) + note;
+    return;
+  }
+  if (rec.status === 'translating') {
+    box.innerHTML = asrDoneRow(rec, n) +
+      bar(`Translating → ${rec.target_language_name}`, tdone, tn, 'Segments are translated in batches; each batch appears as soon as it comes back.');
+    return;
+  }
+  if (rec.status === 'reviewing') {
+    box.innerHTML = asrDoneRow(rec, n) + translatedRow(rec) +
+      bar('Checking translation', rec.review_done || 0, rec.review_total || 0,
+        'Each batch of 25 segments is checked for length, punctuation, sentences cut across segments and translation quality; edits appear as each batch comes back.');
+    return;
+  }
+  if (rec.status === 'synthesizing') {
+    box.innerHTML = asrDoneRow(rec, n) + translatedRow(rec) +
+      bar('Generating speech', rec.tts_done || 0, rec.tts_total || 0,
+        "Each segment's speech and the speed-up it needs appear as soon as it comes back.");
+    return;
+  }
+  if (rec.status === 'dubbing') {
+    box.innerHTML = asrDoneRow(rec, n) + translatedRow(rec) +
+      '<div class="row"><strong><span class="spin"></span> Fitting and mixing the dub</strong></div>' +
+      '<p class="hint">Fitting each clip to its slot (loudness, speed, pauses) and mixing with the background. No API requests.</p>';
+    return;
+  }
+  if (rec.status && rec.status.startsWith('lipsync')) {
+    box.innerHTML = asrDoneRow(rec, n) + translatedRow(rec) + dubbedRow(rec) + lipsyncProgress(rec);
+    return;
+  }
+  if (rec.status === 'refreshing') {
+    const r = rec.refresh || {};
+    const seg = rec.segments.find(s => s.id === r.segment);
+    const what = seg ? ` (${fmt(seg.start)}, speaker ${seg.speaker})` : '';
+    const label = { translating: 'Translating', synthesizing: 'Generating speech', dubbing: 'Fitting and mixing the dub' }[r.step] || 'Starting';
+    box.innerHTML = asrDoneRow(rec, n) +
+      (rec.stage === 'translated' || rec.stage === 'dubbed' ? translatedRow(rec) : '') +
+      (rec.stage === 'dubbed' ? dubbedRow(rec) : '') +
+      `<div class="row"><strong>Updating the edited segment${what}</strong></div>` +
+      ((r.step || '').startsWith('lipsync')
+        ? lipsyncProgress({ ...rec, status: r.step })
+        : `<div class="row"><strong><span class="spin"></span> ${label}</strong></div>`) +
+      '<p class="hint">Only this segment is redone, fitted on its own; the rest of the run stays as it is.</p>';
+    return;
+  }
+  if (rec.stage === 'translated' || rec.stage === 'dubbed') {
+    // a failed lip-sync leaves the dub as it was: its error goes with the lip-sync row, not the dub button
+    const lipFailed = rec.status === 'error' && (rec.failed_at || '').startsWith('lipsync');
+    const segFailed = rec.status === 'error' && rec.failed_at === 'refreshing';  // shown by itself, below
+    box.innerHTML = asrDoneRow(rec, n) + translatedRow(rec);
+    if (rec.stage === 'dubbed') box.insertAdjacentHTML('beforeend', dubbedRow(rec) + lipsyncRow(rec));
+    const checkFailed = rec.segments.filter(s => s.review_error).length;
+    const unchecked = rec.segments.filter(s => s.translation && !s.review && !s.review_error && !userEdited(s)).length;
+    if (rec.target_language !== rec.language) addCheck(box, rec, checkFailed, unchecked);
+    const dubbed = rec.stage === 'dubbed';
+    if (dubbed) {
+      // a lip-sync that is done and current can only be redone in debug mode
+      const lipCurrent = rec.lipsync && !lipFailed && !(rec.stale || []).includes('lipsync');
+      box.insertAdjacentHTML('beforeend', `
+        <div class="row${lipCurrent ? ' dbg' : ''}">
+          <p class="hint">Sync the speakers' mouths to the dub, where their face is on screen. Runs on one GPU, roughly 7× the video's length.</p>
+          <button type="button" class="btn" id="lipsyncBtn">${lipFailed ? 'Retry lip-sync' : rec.lipsync ? 'Lip-sync again' : 'Lip-sync'}</button>
+        </div>`);
+      $('lipsyncBtn').addEventListener('click', () => startLipsync($('lipsyncBtn')));
+      if (lipFailed) addError(box, rec.error);
+    }
+    box.insertAdjacentHTML('beforeend', `
+      ${dubbed ? `<div class="row dbg">
+        <p class="hint">Fit and mix the dub again from the speech already made (no API requests).</p>
+        <button type="button" class="btn" id="refitBtn">Refit</button>
+      </div>` : ''}
+      <div class="voices" id="voicePicker"></div>
+      <div class="row">
+        <p class="hint">${rec.stage === 'dubbed' ? 'Pick other voices to dub again.' : 'Pick a voice per speaker, then dub. Each clip is matched in loudness to the speaker, sped up just enough to fit its slot (at most 1.65×) and its pauses lined up with the speaker\'s.'}</p>
+        <button type="button" class="btn primary" id="dubBtn"></button>
+      </div>`);
+    renderVoicePicker($('voicePicker'), rec);
+    if (dubbed) $('refitBtn').addEventListener('click', () => startRefit($('refitBtn')));
+    const btn = $('dubBtn');
+    btn.textContent = rec.status === 'error' && !lipFailed && !segFailed ? 'Retry dub' : rec.stage === 'dubbed' ? 'Dub again' : `Dub · ${rec.target_language_name}`;
+    btn.addEventListener('click', () => startDub(btn));
+    const picks = [...document.querySelectorAll('#voicePicker select')];
+    const needPick = () => {  // every speaker needs a voice before dubbing
+      btn.disabled = picks.some(sel => !sel.value);
+      btn.title = btn.disabled ? 'Pick a voice for every speaker' : '';
+    };
+    needPick();
+    for (const sel of picks) sel.addEventListener('change', needPick);
+    addRedo(box, rec);
+    if (segFailed) addError(box, 'Updating the edited segment failed: ' + rec.error);
+    else if (rec.status === 'error' && !lipFailed) addError(box, rec.error);
+    return;
+  }
+  if (rec.stage === 'transcribed') {
+    box.innerHTML = asrDoneRow(rec, n);
+    const segFailed = rec.status === 'error' && rec.failed_at === 'refreshing';
+    const retry = rec.status === 'error' && !segFailed;
+    box.insertAdjacentHTML('beforeend', `
+      <div class="row">
+        <label class="pick">Translate to <select id="targetSelect"></select></label>
+        <button type="button" class="btn primary" id="translateBtn">${retry ? 'Retry translation' : 'Translate'}</button>
+      </div>`);
+    fillTargets($('targetSelect'), rec, false);
+    $('translateBtn').addEventListener('click', () => startStep($('translateBtn'), 'translate', $('targetSelect').value));
+    addRedo(box, rec);
+    if (retry) addError(box, rec.error);
+    if (segFailed) addError(box, 'Updating the edited segment failed: ' + rec.error);
+    return;
+  }
+  // diarized, waiting for the user (or a failed transcription to retry)
+  box.innerHTML = `
+    <div class="row">
+      <p class="hint">${rec.num_speakers ?? rec.speakers.length} speaker(s), ${n} segments ready. Check them, then transcribe.</p>
+    </div>
+    <div class="row">
+      <label class="pick">Then translate to <select id="targetSelect"></select></label>
+      <button type="button" class="btn primary" id="transcribeBtn"></button>
+    </div>`;
+  const btn = $('transcribeBtn');
+  const sel = $('targetSelect');
+  fillTargets(sel, rec, true);
+  const label = () => {
+    btn.textContent = (rec.status === 'error' ? 'Retry transcription' : sel.value ? 'Transcribe & translate' : 'Transcribe') +
+      ` · ${rec.language_name}` + (sel.value ? ` → ${sel.selectedOptions[0].textContent}` : '');
+  };
+  label();
+  sel.addEventListener('change', label);
+  btn.addEventListener('click', () => startStep(btn, 'transcribe', sel.value));
+  if (rec.status === 'error') addError(box, rec.error);
+}
+
+function translatedRow(rec) {
+  const failed = rec.translation_failed ? ` · <span style="color:var(--danger)">${rec.translation_failed} failed</span>` : '';
+  const secs = rec.timings && rec.timings.translation != null ? ` in ${rec.timings.translation}s` : '';
+  let check = '';
+  if (rec.review && rec.status !== 'reviewing') {
+    const segs = rec.segments;
+    const edited = segs.filter(s => s.review && s.review.changed && s.translation === s.review.reviewed).length;
+    const flagged = segs.filter(s => s.review && s.review.issues.length).length;
+    const bad = segs.filter(s => s.review_error).length;
+    const model = (rec.review.model || '').split('/').pop();
+    check = rec.review.error && !segs.some(s => s.review)
+      ? ' · <span style="color:var(--danger)">check failed</span>'
+      : `<span class="dbg"> · checked by ${esc(model)}: ${edited} edited, ${flagged} flagged` +
+        (bad ? `, <span style="color:var(--danger)">${bad} failed</span>` : '') + '</span>';
+  }
+  return `<div class="row"><span class="pill ok">✓ Translated → ${rec.target_language_name}</span>${stalePill(rec, 'translation')}<span class="count">${rec.translate_total || 0} segments${secs}${failed}${check}</span></div>`;
+}
+
+function esc(t) {
+  return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+function dubbedRow(rec) {
+  const d = rec.dub || {};
+  const x = v => (v == null ? '–' : `${Number(v).toFixed(2)}×`);
+  const fails = (d.failed || 0) + (rec.tts_failed || 0);
+  const failed = fails ? ` · <span style="color:var(--danger)">${fails} failed</span>` : '';
+  return `
+    <div class="row"><span class="pill ok">✓ Dubbed${rec.tts_style ? ` · ${rec.tts_style}` : ''}</span>${stalePill(rec, 'dub')}
+      <span class="count"><span class="dbg">${d.sped_up ?? 0} of ${d.fitted ?? 0} sped up · ${x(d.min_speed)}–${x(d.max_speed)}, median ${x(d.median_speed)}${d.speed_floor != null ? ` · floor ${x(d.speed_floor)}` : ''}${d.matched_pauses ? ` · ${d.matched_pauses} pause(s) lined up` : ''}</span>${failed}</span></div>
+    <div class="links dbg">
+      <a href="${rec.dubbed_video_url}" download>dubbed.mp4 (dub + original track)</a>
+      <a href="${rec.dubbed_audio_url}" download>dubbed_audio.wav</a>
+    </div>`;
+}
+
+// Lip-sync: done summary, and live progress while it runs (the worker's progress.json, relayed by the server)
+function lipsyncRow(rec) {
+  const l = rec.lipsync;
+  if (!l) return '';
+  const left = (l.rejected || []).length + (l.skipped || []).length;
+  const secs = rec.timings && rec.timings.lipsync != null ? ` in ${Math.round(rec.timings.lipsync)}s` : '';
+  const v = fileVersion(rec, 'lipsync');
+  return `
+    <div class="row"><span class="pill ok">✓ Lip-synced</span>${stalePill(rec, 'lipsync')}
+      <span class="count dbg">${(l.kept || []).length} of ${l.ranges} part(s) · ${l.kept_seconds}s of ${l.range_seconds}s synced${left ? ` · ${left} left as the original (failed the sync check)` : ''}${secs}</span></div>
+    <div class="links dbg">
+      <a href="${rec.lipsync_video_url}?v=${v}" target="_blank">lipsynced.mp4 (open)</a>
+      <a href="${rec.lipsync_video_url}?v=${v}" download>download</a>
+    </div>`;
+}
+
+function lipsyncProgress(rec) {
+  if (rec.status === 'lipsync_queued') {
+    return '<div class="row"><strong><span class="spin"></span> Waiting for the GPU</strong></div>' +
+      '<p class="hint">Another run is being lip-synced. This one starts when it finishes.</p>';
+  }
+  if (rec.status === 'lipsync_analysing') {
+    return '<div class="row"><strong><span class="spin"></span> Finding who is speaking</strong></div>' +
+      '<p class="hint">Shots, faces, and which face is talking in each segment. Usually under half the video\'s length.</p>';
+  }
+  const p = rec.lipsync_progress || {};
+  const total = p.seconds_total || 0;
+  const done = Math.min(p.seconds_done || 0, total);
+  const label = {
+    cropping: 'Preparing the face crops',
+    loading: 'Loading the model',
+    lipsyncing: `Lip-syncing part ${p.range} of ${p.ranges}`,
+    checking: `Checking part ${p.range} of ${p.ranges}`,
+    compositing: 'Putting the video together',
+    done: 'Finishing',
+  }[p.status] || 'Starting';
+  const eta = p.eta_s ? ` · about ${p.eta_s >= 90 ? `${Math.round(p.eta_s / 60)} min` : `${p.eta_s}s`} left` : '';
+  return `
+    <div class="row"><strong><span class="spin"></span> ${label}</strong><span class="count">${done.toFixed(1)} / ${total.toFixed(1)} s of video${eta}</span></div>
+    <div class="bar"><div style="width:${total ? (done / total) * 100 : 0}%"></div></div>
+    <p class="hint">Only the parts where a speaker's face is on screen are synced. Parts that fail the sync check keep the original video.</p>`;
+}
+
+async function startLipsync(btn) {
+  if (!current) return;
+  const text = btn.textContent;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Starting…';
+  try {
+    const res = await fetch(`/v2/runs/${current.run_id}/lipsync`, { method: 'POST' });
+    const rec = await readJson(res);
+    if (!res.ok) throw new Error(rec.detail || res.statusText);
+    showRecord(rec);
+    refreshRuns();
+  } catch (err) {
+    toast('Could not start lip-sync: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = text;
+  }
+}
+
+// One voice picker per speaker: the target language's voices (tts.preferred), female then male (the speaker's
+// gender first), each best first
+function renderVoicePicker(el, rec) {
+  const pref = preferredVoices[rec.target_language] || preferredVoices.hi || { female: [], male: [] };
+  for (const sp of rec.speakers) {
+    const row = document.createElement('label');
+    row.className = 'voice-row';
+    row.style.setProperty('--c', color(sp.speaker));
+    row.append(speakerAvatar(sp), `Speaker ${sp.speaker}`);
+    if (sp.gender === 'female' || sp.gender === 'male') {
+      const pct = sp.gender_manual || sp.gender_confidence == null ? '' : ` (${Math.round(sp.gender_confidence * 100)}%)`;
+      row.append(` · ${sp.gender}${pct}`);
+    }
+    const sel = document.createElement('select');
+    sel.dataset.speaker = sp.speaker;
+    const voice = (rec.voices || {})[String(sp.speaker)];
+    const kinds = sp.gender === 'male' ? ['male', 'female'] : ['female', 'male'];
+    for (const kind of kinds) {
+      const group = document.createElement('optgroup');
+      group.label = kind === 'female' ? 'Female' : 'Male';
+      for (const v of pref[kind]) group.appendChild(new Option(v, v));
+      sel.appendChild(group);
+    }
+    if (voice) sel.value = voice;
+    else {  // gender couldn't be told: no voice is suggested, the user has to pick one
+      const none = new Option('Choose a voice…', '');
+      none.disabled = true;
+      sel.insertBefore(none, sel.firstChild);
+      sel.value = '';
+      row.append(' (gender unknown)');
+    }
+    row.appendChild(sel);
+    row.appendChild(sampleButton(sel, rec.target_language));
+    el.appendChild(row);
+  }
+}
+
+// A play button beside a voice picker: plays the picked voice reading the target language's sample sentence (made on the
+// server the first time, so the first play of a voice can take a few seconds); one sample plays at a time
+const samplePlayer = new Audio();
+let sampleBtn = null;
+function sampleButton(sel, lang) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'btn small';
+  btn.innerHTML = '<span class="msi">play_arrow</span>';
+  btn.title = 'Play a sample of this voice';
+  const idle = b => { b.innerHTML = '<span class="msi">play_arrow</span>'; };
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+    const playing = sampleBtn === btn;
+    samplePlayer.pause();
+    if (sampleBtn) idle(sampleBtn);
+    sampleBtn = null;
+    if (playing || !sel.value) return;
+    sampleBtn = btn;
+    btn.innerHTML = '<span class="spin"></span>';
+    samplePlayer.src = `/tts-sample/${lang}/${encodeURIComponent(sel.value)}.wav`;
+    samplePlayer.play().then(() => { if (sampleBtn === btn) btn.innerHTML = '<span class="msi">stop</span>'; }).catch(() => {
+      if (sampleBtn !== btn) return;
+      idle(btn); sampleBtn = null;
+      toast('Could not play the sample');
+    });
+  });
+  sel.addEventListener('change', () => { if (sampleBtn === btn) btn.click(); });
+  return btn;
+}
+samplePlayer.addEventListener('ended', () => {
+  if (sampleBtn) { sampleBtn.innerHTML = '<span class="msi">play_arrow</span>'; sampleBtn = null; }
+});
+
+async function startDub(btn) {
+  if (!current) return;
+  const voices = {};
+  for (const sel of document.querySelectorAll('#voicePicker select')) voices[sel.dataset.speaker] = sel.value;
+  const style = current.tts_style || null;  // no style picker: a run keeps the style it was dubbed with
+  const text = btn.textContent;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Starting…';
+  try {
+    const res = await fetch(`/v2/runs/${current.run_id}/dub`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ voices, style }),
+    });
+    const rec = await readJson(res);
+    if (!res.ok) throw new Error(rec.detail || res.statusText);
+    showRecord(rec);
+    refreshRuns();
+  } catch (err) {
+    toast('Could not start the dub: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = text;
+  }
+}
+
+// Refit: only the fit and mix again, from the stored TTS clips (no API requests)
+async function startRefit(btn) {
+  if (!current) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Starting…';
+  try {
+    const res = await fetch(`/v2/runs/${current.run_id}/refit`, { method: 'POST' });
+    const rec = await readJson(res);
+    if (!res.ok) throw new Error(rec.detail || res.statusText);
+    showRecord(rec);
+    refreshRuns();
+  } catch (err) {
+    toast('Could not refit: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = 'Refit';
+  }
+}
+
+// A finished stage whose input was redone since: kept as it was, until it is run again
+function stalePill(rec, what) {
+  return (rec.stale || []).includes(what)
+    ? '<span class="pill stale" title="Made from an earlier version of the stage before it. Run it again to refresh.">outdated</span>'
+    : '';
+}
+
+// Redo from a language to a language, in one go. The source language unchanged and a target picked: only the
+// translation (and its check) is redone; otherwise every segment is transcribed again, then translated if a target
+// is picked. The results after it are kept, marked outdated, until those stages are run again.
+let redoOpen = false;
+function addRedo(box, rec) {
+  const translated = rec.stage === 'translated' || rec.stage === 'dubbed';
+  box.insertAdjacentHTML('beforeend', `
+    <details class="redo">
+      <summary>Redo</summary>
+      <div class="row">
+        <label class="pick">From <select id="redoLang"></select></label>
+        <label class="pick">To <select id="redoTarget"></select></label>
+        <button type="button" class="btn" id="redoBtn">Redo</button>
+      </div>
+      <p class="hint" id="redoHint"></p>
+    </details>`);
+  const det = box.querySelector('details.redo');
+  det.open = redoOpen;
+  det.addEventListener('toggle', () => { redoOpen = det.open; });
+  const lang = $('redoLang'), target = $('redoTarget');
+  for (const o of langSelect.options) if (o.value) lang.add(new Option(o.textContent, o.value));
+  lang.value = rec.language;
+  fillTargets(target, rec, true);
+  if (!translated) target.value = '';
+  const asr = () => lang.value !== rec.language || !target.value;  // a translation-only redo needs a target
+  const hint = () => {
+    $('redoHint').textContent = (asr()
+      ? 'Sends every segment to speech-to-text again' + (target.value ? ', then translates and checks it.' : '.')
+      : 'Translates and checks every segment again (the transcript is kept).')
+      + (translated ? ' What came after is kept, marked outdated until you redo it.' : '');
+  };
+  lang.addEventListener('change', hint);
+  target.addEventListener('change', hint);
+  hint();
+  $('redoBtn').addEventListener('click', () => {
+    if (asr()) {
+      if (!confirm('Transcribe every segment again' + (target.value ? ' and translate it' : '') + '? This sends them all to the speech-to-text API.')) return;
+      startStep($('redoBtn'), 'transcribe', target.value || null, { redo: true, language: lang.value });
+    } else {
+      if (!confirm('Translate and check every segment again?')) return;
+      startStep($('redoBtn'), 'translate', target.value, { redo: true });
+    }
+  });
+}
+
+// The translation check is a stage of its own: its button, and the editor for the system prompt it sends
+function addCheck(box, rec, failed, unchecked) {
+  const total = rec.segments.filter(s => s.translation && !userEdited(s)).length;
+  const checked = rec.segments.filter(s => s.review).length;
+  const pending = failed + unchecked;
+  const redo = total > 0 && !pending;
+  const model = ((rec.review && rec.review.model) || 'gemini-3.5-flash-lite').split('/').pop();
+  const state = !checked && !failed
+    ? 'Not checked yet'
+    : `${checked} of ${total} checked${failed ? ` · <span style="color:var(--danger)">${failed} failed</span>` : ''}`;
+  const done = redo ? ' dbg' : '';  // a check with nothing left to do is shown in debug mode only
+  box.insertAdjacentHTML('beforeend', `
+    <div class="row${done}"><strong>Translation check</strong><span class="count">${state}</span></div>
+    <p class="hint">${model} reads each translation next to its source and fixes length, punctuation, broken sentences and mistranslations.${rec.review && rec.review.error ? ' ' + esc(rec.review.error) : ''}</p>
+    <div class="row${done}">
+      <button type="button" class="btn" id="promptBtn">Edit prompt${rec.review_prompt_custom ? ' · custom' : ''}</button>
+      <button type="button" class="btn" id="reviewBtn">${redo ? 'Re-run check' : failed ? 'Retry check' : 'Check translation'}</button>
+    </div>`);
+  $('promptBtn').addEventListener('click', openPromptEditor);
+  $('reviewBtn').addEventListener('click', () => {
+    if (redo && !confirm('Undo every edit the check made and check all segments again?')) return;
+    startStep($('reviewBtn'), 'review', null, { redo });
+  });
+}
+
+// The editor for the check's system prompt (saved per run; empty or the default text means the default)
+function openPromptEditor() {
+  if (!current) return;
+  $('promptText').value = current.review_prompt || '';
+  $('promptMsg').textContent = '';
+  $('promptDialog').showModal();
+}
+
+$('promptReset').addEventListener('click', async () => {
+  try {
+    const res = await fetch('/v2/review-prompt');
+    const body = await readJson(res);
+    if (!res.ok) throw new Error(body.detail || res.statusText);
+    $('promptText').value = body.prompt;
+    $('promptMsg').textContent = 'The default prompt is loaded. Save to use it.';
+  } catch (err) {
+    $('promptMsg').textContent = 'Could not load the default: ' + err.message;
+  }
+});
+$('promptCancel').addEventListener('click', () => $('promptDialog').close());
+$('promptSave').addEventListener('click', async () => {
+  if (!current) return;
+  const btn = $('promptSave');
+  btn.disabled = true;
+  try {
+    const res = await fetch(`/v2/runs/${current.run_id}/review-prompt`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: $('promptText').value }),
+    });
+    const rec = await readJson(res);
+    if (!res.ok) throw new Error(rec.detail || res.statusText);
+    $('promptDialog').close();
+    showRecord(rec);
+    toast(rec.review_prompt_custom ? 'Prompt saved. Run the check to use it.' : 'Back to the default prompt.');
+  } catch (err) {
+    $('promptMsg').textContent = err.message;
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+function asrDoneRow(rec, n) {
+  const failed = rec.asr_failed ? ` · <span style="color:var(--danger)">${rec.asr_failed} failed</span>` : '';
+  const secs = rec.timings && rec.timings.asr != null ? ` in ${rec.timings.asr}s` : '';
+  return `<div class="row"><span class="pill ok">✓ Transcribed</span><span class="count">${n} segments${secs}${failed}</span></div>`;
+}
+
+function addError(box, msg) {
+  const p = document.createElement('p');
+  p.className = 'err';
+  p.textContent = msg;
+  box.appendChild(p);
+}
+
+// Target picker: the run's earlier target, else English (Hindi for English speech)
+function fillTargets(sel, rec, optional) {
+  if (optional) sel.add(new Option('No translation', ''));
+  for (const { code, name } of targetLangs) sel.add(new Option(name, code));
+  const pick = rec.target_language || (rec.language === 'en' ? 'hi' : 'en');
+  if (targetLangs.some(l => l.code === pick)) sel.value = pick;
+}
+
+async function startStep(btn, step, target, extra = {}) {
+  if (!current) return;
+  if (step === 'translate' && !target) return toast('Pick a language to translate to');
+  const text = btn.textContent;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Starting…';
+  try {
+    const res = await fetch(`/v2/runs/${current.run_id}/${step}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ target_language: target || null, ...extra }),
+    });
+    const rec = await readJson(res);
+    if (!res.ok) throw new Error(rec.detail || res.statusText);
+    showRecord(rec);
+    refreshRuns();
+  } catch (err) {
+    toast(`Could not start ${{ translate: 'translation', review: 'the check' }[step] || 'transcription'}: ` + err.message);
+    btn.disabled = false;
+    btn.textContent = text;
+  }
+}
+
+// --- segments list: rows are kept and updated in place, so text arrives without a redraw ---
+
+function segState(s, rec) {
+  if (s.error) return 'failed';
+  if (s.text != null) return 'done';
+  return rec.status === 'transcribing' ? 'pending' : 'idle';
+}
+
+function fillText(row, s, state) {
+  const el = row.querySelector('.seg-text');
+  el.className = 'seg-text';
+  el.title = '';
+  if (state === 'done') {
+    el.textContent = s.text || '(no speech recognised)';
+    if (!s.text) el.classList.add('muted');
+    if (current && current.stage !== 'diarized') el.appendChild(editButton(row, s, 'text'));
+  } else if (state === 'pending') {
+    el.innerHTML = '<div class="skel"><span></span><span></span></div>';
+  } else if (state === 'failed') {
+    el.textContent = 'Transcription failed';
+    el.classList.add('bad');
+    el.title = s.error;
+    if (current && current.stage !== 'diarized') el.appendChild(editButton(row, s, 'text'));
+  } else {
+    el.textContent = 'Not transcribed yet';
+    el.classList.add('muted');
+  }
+}
+
+function trState(s, rec) {
+  if (!s.text) return 'none';  // nothing to translate
+  if (s.translation_error) return 'failed';
+  if (s.translation != null) return 'done';
+  if (rec.status === 'translating') return 'pending';
+  return 'none';
+}
+
+function fillTranslation(row, s, state) {
+  const el = row.querySelector('.seg-tr');
+  el.className = 'seg-tr';
+  el.title = '';
+  el.hidden = state === 'none';
+  if (state === 'done') {
+    el.textContent = s.translation || '(empty translation)';
+    if (!s.translation) el.classList.add('muted');
+    if (s.translation_overflow) {  // the segment ends mid-sentence: the start of what follows, dimmed
+      const o = document.createElement('span');
+      o.className = 'seg-tr-overflow';
+      o.title = 'Continues in the next segment';
+      o.textContent = ' ' + s.translation_overflow;
+      el.appendChild(o);
+    }
+    if (s.translation) {  // length in code points, as the backend counts it; debug mode only
+      const n = document.createElement('span');
+      n.className = 'dbg seg-chars';
+      n.textContent = `${[...s.translation].length} chars`;
+      el.appendChild(n);
+    }
+    el.appendChild(editButton(row, s, 'translation'));
+  } else if (state === 'pending') {
+    el.innerHTML = '<div class="skel"><span></span><span></span></div>';
+  } else if (state === 'failed') {
+    el.textContent = 'Translation failed';
+    el.classList.add('bad');
+    el.title = s.translation_error;
+    if (current && (current.stage === 'translated' || current.stage === 'dubbed')) el.appendChild(editButton(row, s, 'translation'));
+  }
+}
+
+// --- editing a segment's transcript or translation, and redoing just that segment ---
+
+const userEdited = s => s.text_edited || s.translation_edited;
+
+function editButton(row, s, field) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'edit-btn';
+  b.title = field === 'text' ? 'Edit the transcript' : 'Edit the translation';
+  b.innerHTML = '<span class="msi">edit</span>';
+  b.addEventListener('click', e => {
+    e.stopPropagation();
+    startEdit(row, field);
+  });
+  return b;
+}
+
+// Swaps the text for a textarea; renderSegments leaves the field alone while row.dataset.editing is set
+function startEdit(row, field) {
+  if (!current || RUNNING.includes(current.status)) return;
+  const s = current.segments.find(x => x.id === Number(row.dataset.id));
+  if (!s) return;
+  const el = row.querySelector(field === 'text' ? '.seg-text' : '.seg-tr');
+  row.dataset.editing = field;
+  el.className = field === 'text' ? 'seg-text' : 'seg-tr';
+  el.title = '';
+  el.hidden = false;
+  el.innerHTML = '';
+  const box = document.createElement('div');
+  box.className = 'seg-editor';
+  box.addEventListener('click', e => e.stopPropagation());  // a click on a row seeks the video
+  const area = document.createElement('textarea');
+  area.value = (field === 'text' ? s.text : s.translation) || '';
+  area.rows = 3;
+  const actions = document.createElement('div');
+  actions.className = 'row';
+  actions.innerHTML = '<button type="button" class="btn small">Cancel</button><button type="button" class="btn small primary">Save</button>';
+  const [cancel, save] = actions.querySelectorAll('button');
+  box.append(area, actions);
+  el.appendChild(box);
+  area.focus();
+  const done = () => {  // the next render fills the field again
+    delete row.dataset.editing;
+    delete row.dataset.key;
+    delete row.dataset.trKey;
+  };
+  cancel.addEventListener('click', () => {
+    done();
+    renderSegments(current);
+  });
+  area.addEventListener('keydown', e => {
+    if (e.key === 'Escape') cancel.click();
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) save.click();
+  });
+  save.addEventListener('click', async () => {
+    const text = area.value.trim();
+    if (!text) {
+      toast("The text can't be empty");
+      return;
+    }
+    save.disabled = cancel.disabled = true;
+    try {
+      const res = await fetch(`/v2/runs/${current.run_id}/segments/${s.id}/${field}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      const rec = await readJson(res);
+      if (!res.ok) throw new Error(rec.detail || res.statusText);
+      done();
+      showRecord(rec);
+    } catch (err) {
+      toast('Could not save the edit: ' + err.message);
+      save.disabled = cancel.disabled = false;
+    }
+  });
+}
+
+// Under an edited segment: what was edited and, while its translation / dub / lip-sync are behind, the button
+// that redoes them for this segment alone
+function fillEdit(row, s, rec) {
+  const el = row.querySelector('.seg-edit');
+  el.innerHTML = '';
+  el.hidden = !(userEdited(s) || s.refresh);
+  if (el.hidden) return;
+  const tag = (text, cls) => {
+    const t = document.createElement('span');
+    t.className = `tag ${cls || ''}`;
+    t.textContent = text;
+    el.appendChild(t);
+  };
+  if (s.text_edited) tag('Transcript edited');
+  if (s.translation_edited) tag('Translation edited');
+  if (!s.refresh) return;
+  const dubbed = rec.stage === 'dubbed';
+  tag(s.retranslate ? 'Not translated again yet' : 'Dub is out of date', 'warn');
+  const running = rec.status === 'refreshing' && rec.refresh && rec.refresh.segment === s.id;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'btn small';
+  const label = !dubbed ? 'Translate again' : s.retranslate ? 'Translate & dub again' : 'Dub again';
+  btn.innerHTML = running ? '<span class="spin"></span> Updating…' : `<span class="msi">refresh</span>${label}`;
+  btn.disabled = RUNNING.includes(rec.status);
+  btn.title = btn.disabled && !running
+    ? 'Wait for the current step to finish'
+    : [s.retranslate && 'translation', dubbed && 'speech', dubbed && 'dub (fitted on its own)', dubbed && rec.lipsync && 'lip-sync']
+      .filter(Boolean).join(', ').replace(/^./, c => c.toUpperCase()) + ' of this segment only';
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    refreshSegment(btn, s.id);
+  });
+  el.appendChild(btn);
+}
+
+async function refreshSegment(btn, segId) {
+  if (!current) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Starting…';
+  try {
+    const res = await fetch(`/v2/runs/${current.run_id}/segments/${segId}/refresh`, { method: 'POST' });
+    const rec = await readJson(res);
+    if (!res.ok) throw new Error(rec.detail || res.statusText);
+    showRecord(rec);
+  } catch (err) {
+    toast('Could not update the segment: ' + err.message);
+    const row = btn.closest('.seg');
+    if (row) delete row.dataset.editKey;
+    renderSegments(current);
+  }
+}
+
+const ISSUE_NAMES = {
+  too_long: 'too long', punctuation: 'punctuation', broken_meaning: 'broken sentence',
+  mistranslation: 'mistranslation', too_literal: 'too literal', untranslated: 'untranslated',
+  wrong_gender: 'wrong gender',
+};
+
+// The translation check's result: issues, why, and (for an edit) the translation from before it
+function fillReview(row, s, rec) {
+  const el = row.querySelector('.seg-review');
+  const r = s.review;
+  el.innerHTML = '';
+  el.title = '';
+  const tag = (text, cls) => {
+    const t = document.createElement('span');
+    t.className = `tag ${cls || ''}`;
+    t.textContent = text;
+    el.appendChild(t);
+    return t;
+  };
+  if (s.review_error) {
+    el.hidden = false;
+    tag('Check failed', 'warn').title = s.review_error;
+    return;
+  }
+  el.hidden = !(r && r.issues && r.issues.length);
+  if (el.hidden) return;
+  tag(r.changed ? 'Edited' : 'Flagged', r.changed ? 'edit' : 'warn');
+  for (const i of r.issues) tag(ISSUE_NAMES[i] || i);
+  if (r.reason || r.note) {
+    const why = document.createElement('span');
+    why.className = 'reason';
+    why.textContent = [r.reason, r.note].filter(Boolean).join(' · ');
+    el.appendChild(why);
+  }
+  if (r.changed) {
+    const alt = document.createElement('span');
+    alt.className = 'alt';
+    alt.textContent = s.translation_original;
+    alt.title = 'Before the check';
+    el.appendChild(alt);
+  }
+}
+
+function dubState(s, rec) {
+  if (!s.translation) return 'none';  // nothing to speak
+  if (s.tts_error) return 'failed';
+  if (s.dub_error) return 'dub-failed';
+  if (s.tts) return 'done';
+  if (rec.status === 'synthesizing') return 'pending';
+  return 'none';
+}
+
+// The rows of the chunk `s` belongs to (each row is a whole chunk now, so just itself)
+function chunkSegs(s, rec) {
+  return rec.segments.filter(x => x.parent_id === s.parent_id);
+}
+
+// The chunk's slot in seconds: its first segment's start to its last segment's end
+function chunkSlot(s, rec) {
+  const segs = chunkSegs(s, rec);
+  return Math.max(...segs.map(x => x.end)) - Math.min(...segs.map(x => x.start));
+}
+
+// The speed-up applied to the chunk's clip; before the mix it's the one it will get (TTS length / slot, at least 1)
+function segSpeed(s, rec) {
+  if (s.dub && s.dub.speed != null) return s.dub.speed;
+  if (s.tts_duration == null) return null;
+  const slot = chunkSlot(s, rec);
+  return slot > 0 ? Math.max(1, s.tts_duration / slot) : 1;
+}
+
+function fillDub(row, s, rec, state) {
+  const el = row.querySelector('.seg-dub');
+  el.hidden = state === 'none';
+  el.innerHTML = '';
+  el.title = '';
+  if (state === 'pending') {
+    el.innerHTML = '<span class="spin"></span> Generating speech…';
+  } else if (state === 'failed' || state === 'dub-failed') {
+    el.innerHTML = `<span class="bad">${state === 'failed' ? 'Speech failed' : 'Dub failed'}</span>`;
+    el.title = s.tts_error || s.dub_error;
+  }
+  if (state !== 'done' && state !== 'dub-failed') return;
+  if (s.tts_voice) el.append(s.tts_voice);
+  const segs = chunkSegs(s, rec);
+  const first = segs[0] === s;  // the chunk's speed and fitting details go on its first segment only
+  const speed = first ? segSpeed(s, rec) : null;
+  const dbg = t => {  // a fitting detail, shown only in debug mode
+    const d = document.createElement('span');
+    d.className = 'dbg';
+    d.textContent = t;
+    el.appendChild(d);
+  };
+  if (speed != null && state === 'done') {
+    const badge = document.createElement('span');
+    badge.className = 'speed dbg ' + (speed <= 1.0001 ? 's1' : speed <= 1.3 ? 's2' : 's3');
+    badge.textContent = `${speed.toFixed(2)}×`;
+    el.appendChild(badge);
+    if (s.dub && s.dub.unit_size > 1) {
+      dbg(`block of ${s.dub.unit_size}`);
+      badge.title = `Fitted as one block with its neighbours; on its own it would need ${s.dub.vanilla_speed.toFixed(2)}×`;
+      if (Math.abs(s.dub.vanilla_speed - speed) > 0.005) dbg(`(alone ${s.dub.vanilla_speed.toFixed(2)}×)`);
+    }
+    if (segs.length > 1) dbg(`chunk of segments ${segs[0].id}–${segs[segs.length - 1].id}`);
+    if (s.dub && s.dub.refit) dbg('fitted alone after an edit');
+    if (s.dub && s.dub.needed_speed != null) {  // banded: raised to the floor, pauses stretched to fill the slot
+      if (speed - s.dub.needed_speed > 0.005) dbg(`(needs ${s.dub.needed_speed.toFixed(2)}×)`);
+      if (s.dub.stretched > 0) dbg(`pauses +${s.dub.stretched.toFixed(2)} s`);
+      if (s.dub.end_gap > 0.05) dbg(`ends ${s.dub.end_gap.toFixed(2)} s early`);
+    }
+    if (s.dub && s.dub.matched_pauses != null) {  // cadence: pauses aligned to the speaker's, TTS edges trimmed
+      if (s.dub.matched_pauses > 0) dbg(`${s.dub.matched_pauses} pause(s) aligned`);
+      if (s.dub.relaxed_pairs > 0) dbg(`${s.dub.relaxed_pairs} by the slow rule, up to +${s.dub.max_pause_added.toFixed(2)} s`);
+      if (s.dub.compressed > 0.05) dbg(`pauses −${s.dub.compressed.toFixed(2)} s`);
+      if (s.dub.trimmed > 0.05) dbg(`trimmed ${s.dub.trimmed.toFixed(2)} s`);
+      if (s.dub.max_stretch_speed != null && s.dub.max_stretch_speed - s.dub.min_stretch_speed > 0.005) {  // cadence-fine
+        dbg(`phrases ${s.dub.min_stretch_speed.toFixed(2)}–${s.dub.max_stretch_speed.toFixed(2)}×`);
+      }
+    }
+    const tts = (s.dub && s.dub.tts_duration) ?? s.tts_duration;  // a clip whose fit failed: its own length and the chunk's slot
+    const slot = (s.dub && s.dub.slot) ?? chunkSlot(s, rec);
+    if (tts != null) dbg(`TTS ${tts.toFixed(1)} s → slot ${slot.toFixed(1)} s`);
+  }
+}
+
+function renderSegments(rec) {
+  const list = $('segList');
+  const segs = rec.segments;
+  $('segCount').textContent = `${segs.length} segments`;
+  list.classList.toggle('busy', RUNNING.includes(rec.status));  // no editing meanwhile
+  const rows = list.children;
+  const same = rows.length === segs.length && segs.every((s, i) => Number(rows[i].dataset.id) === s.id);
+  if (!same) {
+    list.innerHTML = '';
+    activeIdx = -1;
+    for (const s of segs) {
+      const li = document.createElement('li');
+      li.className = 'seg';
+      li.dataset.id = s.id;
+      li.style.setProperty('--c', color(s.speaker));
+      li.innerHTML = '<div class="seg-top"><span class="spk"></span><span class="time"></span><span class="dur dbg"></span></div>' +
+        '<div class="seg-text"></div><div class="seg-tr" hidden></div><div class="seg-review" hidden></div><div class="seg-dub" hidden></div>' +
+        '<div class="seg-edit" hidden></div>';
+      li.querySelector('.time').textContent = `${fmt(s.start)} – ${fmt(s.end)}`;
+      li.querySelector('.dur').textContent = `${(s.end - s.start).toFixed(1)} s` + (s.parts > 1 ? ` · ${s.parts} pieces merged` : '') +
+        (s.slow ? ` · slow (${Math.round(s.pause_share * 100)}% pauses)` : '');
+      if (s.inner_pauses && s.inner_pauses.length) {  // the cuts Gemma joined: where, the pause, and why
+        li.querySelector('.dur').title = s.inner_pauses.map(p =>
+          `merged cut at ${fmt(p.at)}: ${p.duration.toFixed(2)} s pause${p.reason ? ` · ${p.reason}` : ''}`).join('\n');
+      }
+      li.addEventListener('click', () => {
+        runVideo.currentTime = s.start + 0.01;
+        runVideo.play().catch(() => {});
+      });
+      list.appendChild(li);
+    }
+  }
+  segs.forEach((s, i) => {
+    const row = rows[i];
+    const tr = trState(s, rec);
+    const trKey = `${tr}|${s.translation}|${s.translation_overflow}|${s.translation_error}`;
+    if (row.dataset.trKey !== trKey && row.dataset.editing !== 'translation') {
+      const wasWaiting = row.dataset.tr === 'pending';
+      row.dataset.trKey = trKey;
+      row.dataset.tr = tr;
+      fillTranslation(row, s, tr);
+      if (wasWaiting && tr === 'done') {
+        row.classList.remove('fresh-tr');
+        void row.offsetWidth;  // restart the animation
+        row.classList.add('fresh-tr');
+      }
+    }
+    const revKey = `${JSON.stringify(s.review)}|${s.review_error}|${s.translation}|${s.translation_original}`;
+    if (row.dataset.revKey !== revKey) {
+      row.dataset.revKey = revKey;
+      fillReview(row, s, rec);
+    }
+    const dub = dubState(s, rec);
+    const dubKey = `${dub}|${s.tts_voice}|${s.tts_duration}|${JSON.stringify(s.dub)}|${s.tts_error}|${s.dub_error}`;
+    if (row.dataset.dubKey !== dubKey) {
+      const wasWaiting = row.dataset.dub === 'pending';
+      row.dataset.dubKey = dubKey;
+      row.dataset.dub = dub;
+      fillDub(row, s, rec, dub);
+      if (wasWaiting && dub === 'done') {
+        row.classList.remove('fresh-dub');
+        void row.offsetWidth;  // restart the animation
+        row.classList.add('fresh-dub');
+      }
+    }
+    const spkKey = `${s.speaker}|${rec.speakers.map(sp => sp.speaker + sp.face_url).join()}|${RUNNING.includes(rec.status)}`;
+    if (row.dataset.spkKey !== spkKey) {
+      row.dataset.spkKey = spkKey;
+      fillSpeaker(row, s, rec);
+    }
+    const editKey = `${s.text_edited}|${s.translation_edited}|${s.retranslate}|${s.refresh}|${rec.stage}|${rec.status}|${JSON.stringify(rec.refresh)}|${!!rec.lipsync}`;
+    if (row.dataset.editKey !== editKey) {
+      row.dataset.editKey = editKey;
+      fillEdit(row, s, rec);
+    }
+    const state = segState(s, rec);
+    const key = `${state}|${s.text}|${s.error}`;
+    if (row.dataset.key === key || row.dataset.editing === 'text') return;
+    const wasPending = row.dataset.state === 'pending';
+    row.dataset.key = key;
+    row.dataset.state = state;
+    fillText(row, s, state);
+    if (wasPending && state === 'done') {
+      row.classList.remove('fresh');
+      void row.offsetWidth;  // restart the animation
+      row.classList.add('fresh');
+    }
+  });
+}
+
+// The segment's speaker: their face and a picker to give the segment to another of the run's speakers
+function fillSpeaker(row, s, rec) {
+  const el = row.querySelector('.spk');
+  el.style.setProperty('--c', color(s.speaker));
+  const sel = document.createElement('select');
+  sel.className = 'spk-pick';
+  sel.title = 'Give this segment to another speaker';
+  for (const sp of rec.speakers) sel.add(new Option(`Speaker ${sp.speaker}`, sp.speaker));
+  sel.value = s.speaker;
+  sel.disabled = RUNNING.includes(rec.status);
+  sel.addEventListener('click', e => e.stopPropagation());  // the row's click seeks the video
+  sel.addEventListener('change', () => setSegmentSpeaker(s.id, sel, s.speaker));
+  el.replaceChildren(speakerAvatar(rec.speakers.find(sp => sp.speaker === s.speaker) || { speaker: s.speaker }), sel);
+}
+
+async function setSegmentSpeaker(segId, sel, before) {
+  if (!current) return;
+  sel.disabled = true;
+  try {
+    const res = await fetch(`/v2/runs/${current.run_id}/segments/${segId}/speaker`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ speaker: Number(sel.value) }),
+    });
+    const rec = await readJson(res);
+    if (!res.ok) throw new Error(rec.detail || res.statusText);
+    showRecord(rec);
+  } catch (err) {
+    toast('Could not change the speaker: ' + err.message);
+    sel.value = before;
+    sel.disabled = false;
+  }
+}
+
+// --- speaker timeline: one lane per speaker, a playhead, click to seek ---
+
+function timelineDuration() {
+  const d = runVideo.duration;
+  if (isFinite(d) && d > 0) return d;
+  const segs = current ? current.segments : [];
+  return segs.length ? segs[segs.length - 1].end : 0;
+}
+
+function renderTimeline(rec) {
+  const dur = timelineDuration();
+  const lanes = $('lanes');
+  const genders = rec.speakers.map(sp => `${sp.gender}${sp.gender_manual}${sp.face_url}`).join();
+  const key = `${rec.run_id}|${rec.segments.map(s => s.speaker).join()}|${dur.toFixed(2)}|${genders}|${RUNNING.includes(rec.status)}`;
+  if (lanes.dataset.key !== key && dur > 0) {
+    lanes.dataset.key = key;
+    lanes.innerHTML = '';
+    for (const sp of rec.speakers) {
+      const lane = document.createElement('div');
+      lane.className = 'lane';
+      lane.style.setProperty('--c', color(sp.speaker));
+      lane.innerHTML = `<div class="lane-label">Speaker ${sp.speaker}</div><div class="lane-track"></div>`;
+      lane.querySelector('.lane-label').prepend(speakerAvatar(sp));
+      const gsel = genderSelect(rec, sp);
+      if (gsel) lane.querySelector('.lane-label').append(gsel);
+      const track = lane.querySelector('.lane-track');
+      for (const s of rec.segments.filter(s => s.speaker === sp.speaker)) {
+        const seg = document.createElement('div');
+        seg.className = 'lane-seg';
+        seg.dataset.id = s.id;
+        seg.style.left = `${(s.start / dur) * 100}%`;
+        seg.style.width = `${((s.end - s.start) / dur) * 100}%`;
+        seg.title = `${fmt(s.start)} – ${fmt(s.end)}`;
+        track.appendChild(seg);
+      }
+      track.addEventListener('click', e => {
+        const rect = track.getBoundingClientRect();
+        runVideo.currentTime = ((e.clientX - rect.left) / rect.width) * timelineDuration();
+      });
+      lanes.appendChild(lane);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'playhead-wrap';
+    wrap.innerHTML = '<div class="playhead" id="playhead"></div>';
+    lanes.appendChild(wrap);
+  }
+  syncPlayhead();
+}
+
+// A speaker's gender selector, shown in the lane label: preset from the detection ("unknown" means the voice has
+// to be picked later); null when the run has no detected gender.
+function genderSelect(rec, sp) {
+  if (!sp.gender) return null;
+  const sel = document.createElement('select');
+  sel.title = sp.gender_manual ? 'Gender, set by you' : sp.gender_confidence != null ? `Gender, detected (${Math.round(sp.gender_confidence * 100)}% sure)` : 'Gender';
+  for (const g of ['female', 'male', 'unknown']) sel.add(new Option(g, g));
+  sel.value = sp.gender;
+  sel.disabled = RUNNING.includes(rec.status);
+  sel.addEventListener('change', () => setGender(sp.speaker, sel));
+  return sel;
+}
+
+async function setGender(speaker, sel) {
+  if (!current) return;
+  const before = sel.dataset.prev || (current.speakers.find(sp => sp.speaker === speaker) || {}).gender;
+  sel.disabled = true;
+  try {
+    const res = await fetch(`/v2/runs/${current.run_id}/speakers/${speaker}/gender`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gender: sel.value }),
+    });
+    const rec = await readJson(res);
+    if (!res.ok) throw new Error(rec.detail || res.statusText);
+    showRecord(rec);
+  } catch (err) {
+    toast('Could not change the gender: ' + err.message);
+    sel.value = before;
+    sel.disabled = false;
+  }
+}
+
+function syncPlayhead() {
+  const dur = timelineDuration();
+  const t = runVideo.currentTime || 0;
+  const head = $('playhead');
+  if (head && dur > 0) head.style.left = `${Math.min(t / dur, 1) * 100}%`;
+  if (head) head.style.visibility = t > 0 ? 'visible' : 'hidden';  // no line at 0:00
+  $('tlTime').textContent = `${fmt(t)} / ${fmt(dur)}`;
+
+  if (!current || !current.stage) return;
+  const idx = current.segments.findIndex(s => t >= s.start && t < s.end);
+  if (idx === activeIdx) return;
+  const rows = $('segList').children;
+  if (activeIdx >= 0 && rows[activeIdx]) rows[activeIdx].classList.remove('active');
+  for (const el of document.querySelectorAll('.lane-seg.active')) el.classList.remove('active');
+  if (idx >= 0 && rows[idx]) {
+    rows[idx].classList.add('active');
+    rows[idx].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const bar = document.querySelector(`.lane-seg[data-id="${current.segments[idx].id}"]`);
+    if (bar) bar.classList.add('active');
+  }
+  activeIdx = idx;
+}
+
+runVideo.addEventListener('timeupdate', syncPlayhead);
+runVideo.addEventListener('seeked', syncPlayhead);
+runVideo.addEventListener('loadedmetadata', () => { if (current && current.stage) renderTimeline(current); });
+// smoother playhead than timeupdate alone
+(function frame() {
+  if (!runVideo.paused && !$('runView').hidden) syncPlayhead();
+  requestAnimationFrame(frame);
+})();
+
+// --- start ---
+
+renderSteps(null);
+refreshRuns();
+const fromHash = location.hash.match(/run=([0-9a-f]{32})/);
+if (fromHash) openRun(fromHash[1]);
+</script>
+</body>
+</html>
